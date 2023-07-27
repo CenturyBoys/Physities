@@ -9,6 +9,12 @@ from physities.src.enums.base_units import BaseUnit
 class Dimension:
     dimensions_tuple: tuple[float, float, float, float, float]
 
+    def __post_init__(self):
+        if not isinstance(self.dimensions_tuple, tuple):
+            raise TypeError(f"dimensions_tuple is not of the type {type(tuple)}.")
+        if len(self.dimensions_tuple) != len(BaseUnit):
+            raise ValueError(f"Invalid length of tuple. Expected {len(BaseUnit)}, but got {len(self.dimensions_tuple)}.")
+
     @property
     def length(self):
         return self.dimensions_tuple[BaseUnit.LENGTH]
@@ -26,56 +32,42 @@ class Dimension:
         return self.dimensions_tuple[BaseUnit.TIME]
 
     @property
-    def quantity(self):
+    def amount(self):
         return self.dimensions_tuple[BaseUnit.AMOUNT]
 
     @classmethod
     def new_time(cls, power: float = None) -> Self:
-        if power is None:
-            power = 1
-        dimensions_tuple = [0.0 for i in BaseUnit]
-        dimensions_tuple[BaseUnit.TIME] = power
-        return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
+        return cls.__new_base_unit(base_unit=BaseUnit.TIME, power=power)
 
     @classmethod
     def new_length(cls, power: float = None) -> Self:
-        if power is None:
-            power = 1
-        dimensions_tuple = [0.0 for i in BaseUnit]
-        dimensions_tuple[BaseUnit.LENGTH] = power
-        return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
+        return cls.__new_base_unit(base_unit=BaseUnit.LENGTH, power=power)
 
     @classmethod
     def new_temperature(cls, power: float = None) -> Self:
-        if power is None:
-            power = 1
-        dimensions_tuple = [0.0 for i in BaseUnit]
-        dimensions_tuple[BaseUnit.TEMPERATURE] = power
-        return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
+        return cls.__new_base_unit(base_unit=BaseUnit.TEMPERATURE, power=power)
 
     @classmethod
     def new_mass(cls, power: float = None) -> Self:
+        return cls.__new_base_unit(base_unit=BaseUnit.MASS, power=power)
+
+    @classmethod
+    def new_amount(cls, power: float = None) -> Self:
+        return cls.__new_base_unit(base_unit=BaseUnit.AMOUNT, power=power)
+
+    @classmethod
+    def __new_base_unit(cls, base_unit: BaseUnit, power: float = None):
         if power is None:
             power = 1
+        elif not isinstance(power, (int, float)):
+            raise TypeError("The exponentiation must be a int or a float.")
         dimensions_tuple = [0.0 for i in BaseUnit]
-        dimensions_tuple[BaseUnit.MASS] = power
+        dimensions_tuple[base_unit] = power
         return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
 
     @classmethod
-    def new_quantity(cls, power: float = None) -> Self:
-        if power is None:
-            power = 1
-        dimensions_tuple = [0.0 for i in BaseUnit]
-        dimensions_tuple[BaseUnit.AMOUNT] = power
-        return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
-
-    @classmethod
-    def new_instance(cls, dimensions_tuple: tuple[float, ...]):
+    def new_instance(cls, dimensions_tuple: tuple[float, float, float, float, float]):
         return cls(dimensions_tuple=dimensions_tuple)
-
-    @staticmethod
-    def _has_one_type_dimension(dimensions_tuple):
-        return len(dimensions_tuple) - dimensions_tuple.count(0) == 1
 
     def get_dimensions(self):
         return [
@@ -91,7 +83,14 @@ class Dimension:
             )
             return Dimension(dimensions_tuple=dimensions_tuple)
         else:
-            raise TypeError("Dimension only allow addition between same instance")
+            raise TypeError("Dimension only allow addition between same instance.")
+
+    def __radd__(self, other):
+        try:
+            to_return = self.__add__(other)
+        except TypeError as e:
+            raise e
+        return to_return
 
     def __sub__(self, other):
         if isinstance(other, Dimension):
@@ -102,48 +101,56 @@ class Dimension:
             )
             return Dimension(dimensions_tuple=dimensions_tuple)
         else:
-            raise TypeError("Dimension only allow subtraction between same instance")
+            raise TypeError("Dimension only allow subtraction between same instance.")
+
+    def __rsub__(self, other):
+        try:
+            to_return = self.__sub__(other)
+        except TypeError as e:
+            raise e
+        return to_return
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             dimensions_tuple = tuple(other * i for i in self.dimensions_tuple)
             return Dimension(dimensions_tuple=dimensions_tuple)
         else:
-            TypeError("Dimension only allow multiplication with int or floats")
+            raise TypeError("Dimension only allow multiplication with int or floats.")
 
     def __rmul__(self, other):
         if isinstance(other, (int, float)):
             dimensions_tuple = tuple(other * i for i in self.dimensions_tuple)
             return Dimension(dimensions_tuple=dimensions_tuple)
         else:
-            TypeError("Dimension only allow multiplication with int or floats")
+            raise TypeError("Dimension only allow multiplication with int or floats.")
 
     def __truediv__(self, other):
         if isinstance(other, (int, float)):
             dimensions_tuple = tuple(i / other for i in self.dimensions_tuple)
             return Dimension(dimensions_tuple=dimensions_tuple)
         else:
-            TypeError("Dimension only allow division by int or floats")
+            raise TypeError("Dimension only allow division by int or floats.")
 
     def __rtruediv__(self, other):
         if isinstance(other, (int, float)):
             dimensions_tuple = tuple(other / i for i in self.dimensions_tuple)
             return Dimension(dimensions_tuple=dimensions_tuple)
         else:
-            TypeError("Dimension only allow division by int or floats")
+            raise TypeError("Dimension only allow division by int or floats.")
 
     def __eq__(self, other):
-        if isinstance(other, Dimension):
+        if isinstance(other, Dimension) or issubclass(type(other), Dimension):
             if other.dimensions_tuple == self.dimensions_tuple:
                 return True
-        if isinstance(other, (int, float)):
-            if other == 0 and set(self.dimensions_tuple) == set((0,)):
-                return True
-            if self._has_one_type_dimension(self.dimensions_tuple):
-                return sum(self.dimensions_tuple) == other
         return False
 
-    def show_dimension(self, power_denominator_limit: int = None):
+    def __pow__(self, power, modulo=None):
+        raise TypeError("Exponentiation with Dimension is not allowed.")
+
+    def __rpow__(self, power):
+        raise TypeError("Exponentiation with Dimension is not allowed.")
+
+    def show_dimension(self):
         symbols = {
             BaseUnit.LENGTH: "L",
             BaseUnit.MASS: "m",
@@ -162,6 +169,7 @@ class Dimension:
             "7": "⁷",
             "8": "⁸",
             "9": "⁹",
+            ".": "ˑ"
         }
         numerator = ""
         denominator = ""
@@ -173,30 +181,18 @@ class Dimension:
             if power < 0:
                 is_numerator = False
                 power = abs(power)
-            power_fraction = Fraction(power)
-            if power_denominator_limit:
-                power_fraction = power_fraction.limit_denominator(
-                    power_denominator_limit
-                )
-            power_fraction_numerator = power_fraction.numerator
-            power_fraction_denominator = power_fraction.denominator
-            power_numerator = "".join(
-                [number_str_to_power_str[i] for i in str(power_fraction_numerator)]
-            )
-            power_denominator = "".join(
-                [number_str_to_power_str[i] for i in str(power_fraction_denominator)]
-            )
-            if power_fraction_denominator == 1:
-                power_str = f"{power_numerator}"
-            else:
-                power_str = f"{power_numerator}ᐟ{power_denominator}"
+            power_str = ''.join([number_str_to_power_str[i] for i in str(power)])
             if is_numerator:
                 numerator += f"{symbols[BaseUnit(i)]}{power_str}"
             else:
                 denominator += f"{symbols[BaseUnit(i)]}{power_str}"
         if not denominator:
-            print(f"{numerator}")
+            to_print = f"{numerator}"
+            print()
         elif not numerator:
-            print(f"1 / {denominator}")
+            to_print = f"1 / {denominator}"
+            print()
         else:
-            print(f"{numerator} / {denominator}")
+            to_print = f"{numerator} / {denominator}"
+        print(to_print)
+        return to_print

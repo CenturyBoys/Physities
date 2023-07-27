@@ -3,9 +3,17 @@ from dataclasses import dataclass
 
 from physities.src.entities.dimension import Dimension
 from physities.src.enums.base_units import BaseUnit
-from physities.src.enums.length import LengthType, to_default_length, from_default_length
+from physities.src.enums.length import (
+    LengthType,
+    to_default_length,
+    from_default_length,
+)
 from physities.src.enums.mass import MassType, to_default_mass, from_default_mass
-from physities.src.enums.quantity import AmountType, to_default_quantity, from_default_quantity
+from physities.src.enums.quantity import (
+    AmountType,
+    to_default_quantity,
+    from_default_quantity,
+)
 from physities.src.enums.temperature import (
     TemperatureType,
     to_default_temperature,
@@ -173,7 +181,7 @@ class PhysicalQuantity:
         return value
 
     def _quantity_converter(self, value, quantity_type: AmountType):
-        quantity_power = self.dimension.quantity
+        quantity_power = self.dimension.amount
         if quantity_power:
             return value
         actual_type = self.scale[BaseUnit.AMOUNT]

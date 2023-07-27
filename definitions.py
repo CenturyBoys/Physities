@@ -27,15 +27,15 @@ class BaseUnit:
                 return type(self)(d=self.d, s=self.s, v=other)
             else:
                 print("Is a revaluation of resolution")
-                return type(self)(d=self.d, s=self.s, v=self.v*other)
+                return type(self)(d=self.d, s=self.s, v=self.v * other)
         elif isinstance(other, type(self)) or issubclass(other, type(self)):
             if self.s == other.s:
                 if self.v is None and other.v is None:
                     print("Is a definition")
-                    return type(self)(d=self.d+other.d, s=self.s)
+                    return type(self)(d=self.d + other.d, s=self.s)
                 else:
                     print("Is a resolution")
-                    return type(self)(d=self.d+other.d, s=self.s, v=self.v*other.v)
+                    return type(self)(d=self.d + other.d, s=self.s, v=self.v * other.v)
 
     def __rmul__(self, other):
         if isinstance(other, (int, float)):
@@ -44,15 +44,15 @@ class BaseUnit:
                 return type(self)(d=self.d, s=self.s, v=other)
             else:
                 print("Is a revaluation of resolution")
-                return type(self)(d=self.d, s=self.s, v=self.v*other)
+                return type(self)(d=self.d, s=self.s, v=self.v * other)
         elif isinstance(other, type(self)) or issubclass(other, type(self)):
             if self.s == other.s:
                 if self.v is None and other.v is None:
                     print("Is a definition")
-                    return type(self)(d=self.d+other.d, s=self.s)
+                    return type(self)(d=self.d + other.d, s=self.s)
                 else:
                     print("Is a resolution")
-                    return type(self)(d=self.d+other.d, s=self.s, v=self.v*other.v)
+                    return type(self)(d=self.d + other.d, s=self.s, v=self.v * other.v)
 
 
 meters = BaseUnit()
