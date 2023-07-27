@@ -13,7 +13,9 @@ class Dimension:
         if not isinstance(self.dimensions_tuple, tuple):
             raise TypeError(f"dimensions_tuple is not of the type {type(tuple)}.")
         if len(self.dimensions_tuple) != len(BaseUnit):
-            raise ValueError(f"Invalid length of tuple. Expected {len(BaseUnit)}, but got {len(self.dimensions_tuple)}.")
+            raise ValueError(
+                f"Invalid length of tuple. Expected {len(BaseUnit)}, but got {len(self.dimensions_tuple)}."
+            )
 
     @property
     def length(self):
@@ -169,7 +171,7 @@ class Dimension:
             "7": "⁷",
             "8": "⁸",
             "9": "⁹",
-            ".": "ˑ"
+            ".": "ˑ",
         }
         numerator = ""
         denominator = ""
@@ -181,7 +183,7 @@ class Dimension:
             if power < 0:
                 is_numerator = False
                 power = abs(power)
-            power_str = ''.join([number_str_to_power_str[i] for i in str(power)])
+            power_str = "".join([number_str_to_power_str[i] for i in str(power)])
             if is_numerator:
                 numerator += f"{symbols[BaseUnit(i)]}{power_str}"
             else:
