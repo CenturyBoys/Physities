@@ -17,7 +17,7 @@ def dimensions_group_test():
 
 
 def _conversion_tuple_test():
-    return tuple({"from_base": 1, "to_base": 1} for i in BaseUnit)
+    return tuple(1 for i in BaseUnit)
 
 
 @pytest.fixture()

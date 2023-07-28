@@ -24,13 +24,7 @@ class BaseScale(type):
     dimension: Dimension = None
     value: float = None
     resize: float = 1
-    conversion_tuple: tuple[
-        dict[str:float, str:float],
-        dict[str:float, str:float],
-        dict[str:float, str:float],
-        dict[str:float, str:float],
-        dict[str:float, str:float],
-    ] = tuple({"from_base": 1, "to_base": 1} for i in BaseUnit)
+    conversion_tuple: tuple[float, float, float, float, float] = tuple(1 for i in BaseUnit)
 
     def __call__(cls, value, dimension, conversion_tuple, resize):
         # This method creates an instance of the dynamically generated class
@@ -63,6 +57,12 @@ class BaseScale(type):
             "value": None,
         }
 
+    def __eq__(self, other):
+        if isinstance(other, BaseScale):
+            if self.dimension == other.dimension and self.resize == other.resize and self.conversion_tuple == other.conversion_tuple:
+                return True
+        return False
+
     def __mul__(self, other):
         if self.value is None:
             if isinstance(other, (int, float)):
@@ -72,7 +72,6 @@ class BaseScale(type):
                     new_conversion = self.__tuple_number_conversion_operation(
                         tuple_var=self.conversion_tuple,
                         number=other,
-                        to_base_callable=lambda t, n: t / n,
                         from_base_callable=lambda t, n: t * n,
                         index=index,
                     )
@@ -91,16 +90,18 @@ class BaseScale(type):
                 return type(self)(BaseScale.__name__, (BaseScale,), result_attrs)
 
             elif isinstance(other, type(self)) or issubclass(other, type(self)):
-                new_conversion = self.__tuple_tuple_conversion_operation(
-                    self.conversion_tuple,
-                    other.conversion_tuple,
+                new_conversion, resize_factor = self.__tuple_tuple_conversion_operation(
+                    tuple_1=self.conversion_tuple,
+                    tuple_2=other.conversion_tuple,
+                    dimension_1=self.dimension,
+                    dimension_2=other.dimension,
                     from_base_callable=lambda s, o: s * o,
-                    to_base_callable=lambda s, o: s * o,
                 )
+                new_dimension = self.dimension + other.dimension
                 result_attrs = self.__form_result_attrs(
-                    dimension=self.dimension + other.dimension,
+                    dimension=new_dimension,
                     conversion_tuple=new_conversion,
-                    resize=self.resize * other.resize,
+                    resize=resize_factor * self.resize * other.resize,
                 )
                 return type(self)(BaseScale.__name__, (BaseScale,), result_attrs)
 
@@ -141,16 +142,17 @@ class BaseScale(type):
                 )
                 return type(self)(BaseScale.__name__, (BaseScale,), result_attrs)
             elif isinstance(other, type(self)) or issubclass(other, type(self)):
-                new_conversion = self.__tuple_tuple_conversion_operation(
-                    self.conversion_tuple,
-                    other.conversion_tuple,
+                new_conversion, resize_factor = self.__tuple_tuple_conversion_operation(
+                    tuple_1=self.conversion_tuple,
+                    tuple_2=other.conversion_tuple,
+                    dimension_1=self.dimension,
+                    dimension_2=other.dimension,
                     from_base_callable=lambda s, o: s / o,
-                    to_base_callable=lambda s, o: s / o,
                 )
                 result_attrs = self.__form_result_attrs(
                     dimension=self.dimension - other.dimension,
                     conversion_tuple=new_conversion,
-                    resize=self.resize / other.resize,
+                    resize=resize_factor * (self.resize / other.resize),
                 )
                 return type(self)(BaseScale.__name__, (BaseScale,), result_attrs)
             else:
@@ -166,8 +168,7 @@ class BaseScale(type):
                     new_conversion = self.__tuple_number_conversion_operation(
                         tuple_var=self.conversion_tuple,
                         number=other,
-                        from_base_callable=lambda t, n: t / n,
-                        to_base_callable=lambda t, n: n / t,
+                        from_base_callable=lambda t, n: n / t,
                         index=index,
                     )
                     result_attrs = self.__form_result_attrs(
@@ -180,8 +181,7 @@ class BaseScale(type):
                 new_conversion = self.__tuple_number_conversion_operation(
                     tuple_var=self.conversion_tuple,
                     number=1,
-                    from_base_callable=lambda t, n: n / t,
-                    to_base_callable=lambda t, n: n / t,
+                    from_base_callable=lambda t, n: 1 / t,
                 )
                 result_attrs = self.__form_result_attrs(
                     dimension=dimension,
@@ -193,45 +193,37 @@ class BaseScale(type):
             raise TypeError
 
     @staticmethod
+    def __get_annulled_dimensions(dimension_1: Dimension, dimension_2: Dimension):
+        set_1 = set(dimension_1.get_dimensions())
+        set_2 = set(dimension_2.get_dimensions())
+        #TODO O SINAL MUDA SE É DIV OU MULT AJEITAR
+        set_1_2 = set((dimension_1 + dimension_2).get_dimensions())
+        return list((set_1 - set_1_2).union(set_2 - set_1_2))
+
+    @staticmethod
     def __tuple_tuple_conversion_operation(
-        tuple_1, tuple_2, from_base_callable, to_base_callable
+        tuple_1, tuple_2, dimension_1, dimension_2, from_base_callable
     ):
-        return tuple(
-            {
-                "from_base": from_base_callable(
-                    tuple_1[base_unit_index].get("from_base"),
-                    tuple_2[base_unit_index].get("from_base"),
-                ),
-                "to_base": to_base_callable(
-                    tuple_1[base_unit_index].get("to_base"),
-                    tuple_2[base_unit_index].get("to_base"),
-                ),
-            }
-            for base_unit_index in BaseUnit
-        )
+        annulled_dimensions = BaseScale.__get_annulled_dimensions(dimension_1=dimension_1, dimension_2=dimension_2)
+        operated_conversion_list = list(from_base_callable(tuple_1[base_unit_index], tuple_2[base_unit_index]) for base_unit_index in BaseUnit)
+        resize_factor = 1
+        for index in annulled_dimensions:
+            resize_factor *= operated_conversion_list[index]
+            operated_conversion_list[index] = 1
+        new_conversion = tuple(operated_conversion_list)
+        return new_conversion, resize_factor
 
     @staticmethod
     def __tuple_number_conversion_operation(
-        tuple_var, number, from_base_callable, to_base_callable, index=None
+        tuple_var, number, from_base_callable, index=None
     ):
         if index is None:
             return tuple(
-                {
-                    "from_base": from_base_callable(
-                        tuple_var[base_unit_index].get("from_base"), number
-                    ),
-                    "to_base": to_base_callable(
-                        tuple_var[base_unit_index].get("to_base"), number
-                    ),
-                }
+                from_base_callable(tuple_var[base_unit_index], number)
                 for base_unit_index in BaseUnit
             )
-
         new_conversion = list(tuple_var)
-        new_conversion[index] = {
-            "from_base": from_base_callable(tuple_var[index].get("from_base"), number),
-            "to_base": to_base_callable(tuple_var[index].get("to_base"), number),
-        }
+        new_conversion[index] = from_base_callable(tuple_var[index], number)
         return tuple(new_conversion)
 
     def __pow__(self, power, modulo=None):
@@ -241,7 +233,6 @@ class BaseScale(type):
             tuple_var=self.conversion_tuple,
             number=power,
             from_base_callable=lambda t, n: t**n,
-            to_base_callable=lambda t, n: t**n,
         )
         result_attrs = self.__form_result_attrs(
             dimension=self.dimension * power,
@@ -360,7 +351,7 @@ if __name__ == "__main__":
     Mm = 0.001 * Meter
     Hrs = 3600 * Second
     V2 = Km / Hrs
-    V3 = 1/V2
+    V3 = Km/V2
     # V3 = 15 * V2
     V4 = Mm / Hrs
     V5 = 100 / V4

@@ -1,6 +1,8 @@
 import pytest
 
+from physities.src.entities.dimension import Dimension
 from physities.src.entities.scale.basescale import BaseScale, Scale
+from physities.src.enums.base_units import BaseUnit
 from tests.fixtures import dimensions_group_test, conversion_tuple_test, base_scales
 
 
@@ -61,33 +63,133 @@ class TestBaseScale:
             assert str(error.value) == "Scales offset are not allowed yet."
 
     @staticmethod
-    def test_multiplication(base_scales):
+    def test_multiplication_result_type(base_scales):
+        for base_scale_1 in base_scales:
+            for base_scale_2 in base_scales:
+                result = base_scale_1 * base_scale_2
+                assert isinstance(result, BaseScale)
+
+    @staticmethod
+    def test_multiplication_scalar_monodimensional(base_scales):
+        base_scale = base_scales[0]
+        result = 4 * base_scale
+
+        index = base_scale.dimension.get_dimensions().pop()
+        from_base_value = result.conversion_tuple[index]
+        assert from_base_value == 4
+
+    @staticmethod
+    def test_multiplication_scalar_multidimensional(base_scales):
+        base_scale = base_scales[2]
+        result = 3 * base_scale
+        assert result.resize == 3
+        assert result.dimension == base_scale.dimension
+        assert result.conversion_tuple == base_scale.conversion_tuple
+
+    @staticmethod
+    def test_multiplication_monodimensional_multidimensional_with_annulled_dimension(base_scales):
         base_scale_0 = base_scales[0]
+        base_scale_1 = base_scales[2]
+        aux_1 = 4 * base_scale_0
+        result = base_scale_1 * aux_1
+
+        assert result.resize == 4
+        assert result.dimension == aux_1.dimension + base_scale_1.dimension
+        assert result.conversion_tuple == (1, 1, 1, 1, 1)
+
+    @staticmethod
+    def test_multiplication_monodimensional_monodimensional(base_scales):
+        base_scale = base_scales[0]
+        aux_1 = 5*base_scale
+        aux_2 = (1/5)*base_scale
+        result = aux_1 * aux_2
+        for i in result.conversion_tuple:
+            assert i == 1
+        assert len(result.dimension.get_dimensions()) == 1
+        assert result.resize == 1
+
+    @staticmethod
+    def test_multiplication_multidimensional_multidimensional(base_scales):
         base_scale_1 = base_scales[1]
         base_scale_2 = base_scales[2]
+        aux_1 = 3*base_scale_1
+        result = base_scale_2 * aux_1
 
+        for i in result.conversion_tuple:
+            assert i == 1
+        assert result.resize == 3
+        assert result.dimension == base_scale_2.dimension + base_scale_1.dimension
 
-        result_0 = 4*base_scale_0
-        result_1 = 3 * base_scale_2
-        result_2 = base_scale_1 * result_0
-        result_3 = base_scale_1*base_scale_2
-        result_4 = base_scale_1*base_scale_1
-        result_5 = base_scale_2 * 3
-        results = [result_0, result_1, result_2, result_3, result_4, result_5]
+    @staticmethod
+    def test_multiplication_two_same_instances(base_scales):
+        base_scale = base_scales[1]
+        result = base_scale * base_scale
 
-        for result in results:
-            assert isinstance(result, BaseScale)
-        assert result_0.resize == 1
+        assert result.resize == 1
+        assert result.dimension == 2 * base_scale.dimension
+        assert result.conversion_tuple == base_scale.conversion_tuple
 
-        index = result_0.dimension.get_dimensions().pop()
-        from_to_dict = result_0.conversion_tuple[index]
-        assert from_to_dict.get("from_base") == 4
-        assert from_to_dict.get("to_base") == 0.25
+    @staticmethod
+    def test_multiplication_commutativity(base_scales):
+        base_scale_0 = base_scales[0]
+        base_scale_2 = base_scales[2]
+        result_1 = base_scale_0 * base_scale_2
+        result_2 = base_scale_2 * base_scale_0
+        result_3 = 7*base_scale_0
+        result_4 = base_scale_0*7
 
-        assert result_1.resize == 3
-        assert result_1.dimension == base_scale_2.dimension
-        assert result_1.conversion_tuple == base_scale_2.conversion_tuple
+        assert result_1 == result_2
+        assert result_3 == result_4
 
+    @staticmethod
+    def test_division_same_dimension(base_scales):
+        base_scale = base_scales[1]
+        aux_1 = 3*base_scale
+        result = base_scale / aux_1
+
+        for i in result.conversion_tuple:
+            assert i == 1
+        assert result.dimension == Dimension.new_instance(dimensions_tuple=tuple(0 for i in BaseUnit))
+        assert result.resize == 1/3
+
+    @staticmethod
+    def test_division_scalar_by_monodimensional(base_scales):
+        base_scale = base_scales[0]
+        aux_1 = 4*base_scale
+        result = 2 / aux_1
+
+        index = base_scale.dimension.get_dimensions().pop()
+        from_base_value = result.conversion_tuple[index]
+        assert from_base_value == 0.5
+        assert result.dimension == aux_1.dimension * -1
+        assert result.resize == 1
+
+    @staticmethod
+    def test_division_scalar_by_multidimensional(base_scales):
+        base_scale = base_scales[2]
+        aux_1 = 4 * base_scale
+        result = 2 / aux_1
+
+        for i in BaseUnit:
+            assert result.conversion_tuple[i] == 1 / base_scale.conversion_tuple[i]
+        assert result.dimension == aux_1.dimension * -1
+        assert result.resize == 2 / aux_1.resize
+
+    @staticmethod
+    def test_division_multidimensional_by_scalar(base_scales):
+        base_scale = base_scales[2]
+        aux_1 = 4 * base_scale
+        result = aux_1 / 2
+
+        for i in BaseUnit:
+            assert result.conversion_tuple[i] == base_scale.conversion_tuple[i]
+        assert result.dimension == aux_1.dimension
+        assert result.resize == aux_1.resize / 2
+
+    @staticmethod
+    def test_division_different_dimension(base_scales):
+        base_scale_0 = base_scales[0]
+        base_scale_1 = base_scales[2]
+        aux_1 = 4*base_scale_0
         print()
-
 
