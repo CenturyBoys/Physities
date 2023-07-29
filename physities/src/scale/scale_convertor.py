@@ -1,8 +1,6 @@
-import time
 from dataclasses import dataclass
-from enum import IntEnum
 
-from physities.src.entities.dimension import Dimension
+from physities.src.dimension import Dimension
 from physities.src.enums.base_units import BaseDimensions
 
 
@@ -138,14 +136,18 @@ class ScaleConvertor:
         if isinstance(other, (int, float)):
             new_dimension = self.dimension * -1
             new_rescale_value = 1 / self.rescale_value
+            new_from_base_conversions_list = [
+                1 / self.from_base_conversions[i]
+                for i in BaseDimensions
+            ]
             new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
                 dimension_instance=new_dimension,
-                from_base_conversions=self.from_base_conversions,
+                from_base_conversions=tuple(new_from_base_conversions_list),
                 rescale_value=new_rescale_value,
                 value=other,
             )
             return ScaleConvertor(
-                dimension=self.dimension,
+                dimension=new_dimension,
                 from_base_conversions=new_from_base_conversions,
                 rescale_value=new_value,
             )

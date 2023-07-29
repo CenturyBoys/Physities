@@ -1,7 +1,7 @@
 import pytest
 
-from physities.src.entities.dimension import Dimension
-from physities.src.entities.scale.basescale import BaseScale
+from physities.src.dimension import Dimension
+from physities.src.scale.basescale import BaseScale
 from physities.src.enums.base_units import BaseDimensions
 
 

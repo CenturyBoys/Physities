@@ -1,6 +1,6 @@
 import pytest as pytest
 
-from physities.src.entities.dimension import Dimension
+from physities.src.dimension import Dimension
 from physities.src.enums.base_units import BaseDimensions
 
 

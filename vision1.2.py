@@ -1,7 +1,6 @@
-from dataclasses import dataclass
 from enum import IntEnum
 
-from physities.src.entities.dimension import Dimension
+from physities.src.dimension import Dimension
 
 
 class OperationType(IntEnum):

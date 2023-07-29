@@ -1,9 +1,5 @@
-from dataclasses import dataclass
-from enum import IntEnum
-from typing import Self
-
-from physities.src.entities.dimension import Dimension
-from physities.src.entities.scale.scale_convertor import ScaleConvertor
+from physities.src.dimension import Dimension
+from physities.src.scale.scale_convertor import ScaleConvertor
 from physities.src.enums.base_units import BaseDimensions
 from physities.src.enums.length import LengthType
 from physities.src.enums.mass import MassType
@@ -31,9 +27,7 @@ class MetaScale(type):
             return type(self)(MetaScale.__name__, (MetaScale,), {"scale_conv": new_scale_conv, "value": None})
         if isinstance(other, MetaScale):
             new_scale_conv = self.scale_conv * other.scale_conv
-            # metaclass = type(self)(f"{self.__name__}{other.__name__}", (type(self),), {"scale_conv": new_scale_conv, "value": None})
-            return type(f"lalala", (Scale,), {"scale_conv": new_scale_conv, "value": None})
-
+            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
         raise TypeError(f"{self} only allows multiplication by {self}, {int}, and {float}")
 
     def __rmul__(self, other):
@@ -46,22 +40,22 @@ class MetaScale(type):
     def __truediv__(self, other):
         if isinstance(other, (int, float)):
             new_scale_conv = self.scale_conv / other
-            return MetaScale(MetaScale.__name__, (MetaScale,), {"scale": new_scale_conv, "value": None})
+            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
         if isinstance(other, MetaScale):
             new_scale_conv = self.scale_conv / other.scale_conv
-            return MetaScale(MetaScale.__name__, (MetaScale,), {"scale": new_scale_conv, "value": None})
+            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
         raise TypeError(f"{self} only allows division by {self}, {int}, and {float}")
 
     def __rtruediv__(self, other):
         if isinstance(other, (int, float)):
             new_scale_conv = other / self.scale_conv
-            return MetaScale(MetaScale.__name__, (MetaScale,), {"scale": new_scale_conv, "value": None})
+            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
         raise TypeError(f"{self} can divide only {self}, {int} and {float}")
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, (int, float)):
             new_scale_conv = self.scale_conv ** power
-            return MetaScale(MetaScale.__name__, (MetaScale,), {"scale": new_scale_conv, "value": None})
+            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
         raise TypeError(f"{self} can only be powered by {int} and {float}")
 
     def __rpow__(self, other):
@@ -101,16 +95,56 @@ class Scale(metaclass=MetaScale):
             return new_instance
         raise TypeError
 
+    def __rmul__(self, other):
+        try:
+            to_return = Scale.__mul__(self, other)
+        except TypeError as e:
+            raise e
+        return to_return
+
+    def __truediv__(self, other):
+        if isinstance(other, (int, float)):
+            new_value = self.value / other
+            new_instance = type(self)(new_value)
+            new_instance.scale_conv = self.scale_conv
+            return new_instance
+        if isinstance(other, type(self)):
+            new_scale_conv = self.scale_conv / other.scale_conv
+            new_value = self.value / other.value
+            new_instance = type(self)(new_value)
+            new_instance.scale_conv = new_scale_conv
+            return new_instance
+        raise TypeError
+
+    def __rtruediv__(self, other):
+        if isinstance(other, (int, float)):
+            new_value = other / self.value
+            new_scale_conv = 1 / self.scale_conv
+            new_instance = type(self)(new_value)
+            new_instance.scale_conv = new_scale_conv
+            return new_instance
+        raise TypeError
+
+    def __pow__(self, power, modulo=None):
+        if isinstance(power, (int, float)):
+            new_value = self.value **2
+            new_scale_conv = self.scale_conv**2
+            new_instance = type(self)(new_value)
+            new_instance.scale_conv = new_scale_conv
+            return new_instance
 
 if __name__ == "__main__":
     class Meter(Scale):
         scale_conv: ScaleConvertor = ScaleConvertor(from_base_conversions=(1, 1, 1, 1, 1, 1, 1), dimension=Dimension.new_instance(dimensions_tuple=(1, 0, 0, 0, 0, 0, 0)), rescale_value=1)
         value: float
 
-    M2 = Meter*Meter
+    M2 = 3*Meter*Meter
     d = M2(5)
     c = d*d
-    h = c*c
+    h = 3*c*c
+    h2 = 2 / h
+    h3 = c**2
+    h4 = c/h3
     M3 = M2*Meter
     e = M3(10)
     input()

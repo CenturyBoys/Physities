@@ -1,9 +1,8 @@
 import pytest
 
-from physities.src.entities.dimension import Dimension
-from physities.src.entities.scale.basescale import BaseScale, ScaleConvertor
+from physities.src.dimension import Dimension
+from physities.src.scale.basescale import BaseScale, ScaleConvertor
 from physities.src.enums.base_units import BaseDimensions
-from tests.fixtures import dimensions_group_test, conversion_tuple_test, base_scales
 
 
 @pytest.mark.unit
