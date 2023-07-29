@@ -2,7 +2,7 @@ import pytest
 
 from physities.src.dimension import Dimension
 from physities.src.scale.basescale import BaseScale, ScaleConvertor
-from physities.src.enums.base_units import BaseDimensions
+from physities.src.dimension.base_dimensions import BaseDimension
 
 
 @pytest.mark.unit
@@ -159,7 +159,7 @@ class TestBaseScale:
         for i in result.conversion_tuple:
             assert i == 1
         assert result.dimension == Dimension.new_instance(
-            dimensions_tuple=tuple(0 for i in BaseDimensions)
+            dimensions_tuple=tuple(0 for i in BaseDimension)
         )
         assert result.resize == 1 / 3
 
@@ -181,7 +181,7 @@ class TestBaseScale:
         aux_1 = 4 * base_scale
         result = 2 / aux_1
 
-        for i in BaseDimensions:
+        for i in BaseDimension:
             assert result.conversion_tuple[i] == 1 / base_scale.conversion_tuple[i]
         assert result.dimension == aux_1.dimension * -1
         assert result.resize == 2 / aux_1.resize
@@ -192,7 +192,7 @@ class TestBaseScale:
         aux_1 = 4 * base_scale
         result = aux_1 / 2
 
-        for i in BaseDimensions:
+        for i in BaseDimension:
             assert result.conversion_tuple[i] == base_scale.conversion_tuple[i]
         assert result.dimension == aux_1.dimension
         assert result.resize == aux_1.resize / 2

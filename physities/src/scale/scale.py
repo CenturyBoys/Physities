@@ -1,68 +1,86 @@
+from dataclasses import dataclass
+
 from physities.src.dimension import Dimension
-from physities.src.scale.scale_convertor import ScaleConvertor
+from physities.src.dimension.base_dimensions import BaseDimension
 
 
-class MetaScale(type):
-    scale_conv: ScaleConvertor
+@dataclass(frozen=True, slots=True)
+class Scale:
+    dimension: Dimension
+    from_base_conversions: tuple[
+        float, float, float, float, float, float, float
+    ]
+    rescale_value: float
 
-    def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            new_scale_conv = self.scale_conv * other
-            return type(self)(MetaScale.__name__, (MetaScale,), {"scale_conv": new_scale_conv, "value": None})
-        if isinstance(other, MetaScale):
-            new_scale_conv = self.scale_conv * other.scale_conv
-            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
-        raise TypeError(f"{self} only allows multiplication by {self}, {int}, and {float}")
+    @staticmethod
+    def __get_annulled_dimension(
+        dimension_1: Dimension, dimension_2: Dimension, result_dimension: Dimension
+    ) -> list[BaseDimension, BaseDimension, BaseDimension, BaseDimension, BaseDimension, BaseDimension]:
+        set_1 = set(dimension_1.get_dimensions())
+        set_2 = set(dimension_2.get_dimensions())
+        set_3 = set(result_dimension.get_dimensions())
+        return list((set_1 - set_3).union(set_2 - set_3))
 
-    def __rmul__(self, other):
-        try:
-            to_return = MetaScale.__mul__(self, other)
-        except TypeError as e:
-            raise e
-        return to_return
-
-    def __truediv__(self, other):
-        if isinstance(other, (int, float)):
-            new_scale_conv = self.scale_conv / other
-            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
-        if isinstance(other, MetaScale):
-            new_scale_conv = self.scale_conv / other.scale_conv
-            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
-        raise TypeError(f"{self} only allows division by {self}, {int}, and {float}")
-
-    def __rtruediv__(self, other):
-        if isinstance(other, (int, float)):
-            new_scale_conv = other / self.scale_conv
-            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
-        raise TypeError(f"{self} can divide only {self}, {int} and {float}")
-
-    def __pow__(self, power, modulo=None):
-        if isinstance(power, (int, float)):
-            new_scale_conv = self.scale_conv ** power
-            return type(f"Scale_", (Scale,), {"scale_conv": new_scale_conv, "value": None})
-        raise TypeError(f"{self} can only be powered by {int} and {float}")
-
-
-class Scale(metaclass=MetaScale):
-    scale_conv: ScaleConvertor
-    value: float
-
-    def __init__(self, value):
-        self.value = value
+    @staticmethod
+    def __fit_scale_and_dimension(
+        dimension_instance: Dimension,
+        from_base_conversions: tuple[
+            float, float, float, float, float, float, float
+        ],
+        value: float,
+        rescale_value: float,
+    ):
+        dimension = dimension_instance.get_dimensions()
+        if len(dimension) == 1:
+            index = dimension.pop()
+            from_base_conversions_list = list(from_base_conversions)
+            from_base_conversions_list[index] *= value
+            new_from_base_conversions = tuple(from_base_conversions_list)
+            return 1, new_from_base_conversions
+        return rescale_value * value, from_base_conversions
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            new_value = self.value * other
-            new_instance = type(self)(new_value)
-            new_instance.scale_conv = self.scale_conv
-            return new_instance
-        if isinstance(other, type(self)):
-            new_scale_conv = self.scale_conv * other.scale_conv
-            new_value = self.value * other.value
-            new_instance = type(self)(new_value)
-            new_instance.scale_conv = new_scale_conv
-            return new_instance
-        raise TypeError
+            new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
+                dimension_instance=self.dimension,
+                from_base_conversions=self.from_base_conversions,
+                rescale_value=self.rescale_value,
+                value=other,
+            )
+            return Scale(
+                dimension=self.dimension,
+                from_base_conversions=new_from_base_conversions,
+                rescale_value=new_value,
+            )
+        if isinstance(other, Scale):
+            new_dimension = self.dimension + other.dimension
+            new_from_base_conversions_list = [
+                self.from_base_conversions[i] * other.from_base_conversions[i]
+                for i in BaseDimension
+            ]
+            annulled_dimensions = self.__get_annulled_dimension(
+                dimension_1=self.dimension,
+                dimension_2=other.dimension,
+                result_dimension=new_dimension,
+            )
+            rescale_factor = 1
+            for annulled_index in annulled_dimensions:
+                rescale_factor *= new_from_base_conversions_list[annulled_index]
+                new_from_base_conversions_list[annulled_index] = 1
+            new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
+                dimension_instance=new_dimension,
+                from_base_conversions=tuple(new_from_base_conversions_list),
+                rescale_value=self.rescale_value,
+                value=rescale_factor,
+            )
+            return Scale(
+                dimension=new_dimension,
+                from_base_conversions=new_from_base_conversions,
+                rescale_value=new_value,
+            )
+        return TypeError(
+            f"{Scale} can only be multiplied by {Scale}, {int} or {float}. This operation is not implemented for {type(other)}."
+        )
 
     def __rmul__(self, other):
         try:
@@ -73,32 +91,79 @@ class Scale(metaclass=MetaScale):
 
     def __truediv__(self, other):
         if isinstance(other, (int, float)):
-            new_value = self.value / other
-            new_instance = type(self)(new_value)
-            new_instance.scale_conv = self.scale_conv
-            return new_instance
-        if isinstance(other, type(self)):
-            new_scale_conv = self.scale_conv / other.scale_conv
-            new_value = self.value / other.value
-            new_instance = type(self)(new_value)
-            new_instance.scale_conv = new_scale_conv
-            return new_instance
-        raise TypeError
+            new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
+                dimension_instance=self.dimension,
+                from_base_conversions=self.from_base_conversions,
+                rescale_value=self.rescale_value,
+                value=1 / other,
+            )
+            return Scale(
+                dimension=self.dimension,
+                from_base_conversions=new_from_base_conversions,
+                rescale_value=new_value,
+            )
+        if isinstance(other, Scale):
+            new_dimension = self.dimension - other.dimension
+            annulled_dimensions = self.__get_annulled_dimension(
+                dimension_1=self.dimension,
+                dimension_2=other.dimension,
+                result_dimension=new_dimension,
+            )
+            rescale_factor = 1
+            new_from_base_conversions_list = [
+                self.from_base_conversions[i] / other.from_base_conversions[i]
+                for i in BaseDimension
+            ]
+            for annulled_index in annulled_dimensions:
+                rescale_factor *= new_from_base_conversions_list[annulled_index]
+                new_from_base_conversions_list[annulled_index] = 1
+            new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
+                dimension_instance=new_dimension,
+                from_base_conversions=tuple(new_from_base_conversions_list),
+                rescale_value=self.rescale_value,
+                value=rescale_factor,
+            )
+            return Scale(
+                dimension=new_dimension,
+                from_base_conversions=new_from_base_conversions,
+                rescale_value=new_value,
+            )
+        return TypeError(
+            f"{Scale} can only be divided by {Scale}, {int} or {float}. This operation is not implemented for {type(other)}."
+        )
 
     def __rtruediv__(self, other):
         if isinstance(other, (int, float)):
-            new_value = other / self.value
-            new_scale_conv = 1 / self.scale_conv
-            new_instance = type(self)(new_value)
-            new_instance.scale_conv = new_scale_conv
-            return new_instance
-        raise TypeError
+            new_dimension = self.dimension * -1
+            new_rescale_value = 1 / self.rescale_value
+            new_from_base_conversions_list = [
+                1 / self.from_base_conversions[i]
+                for i in BaseDimension
+            ]
+            new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
+                dimension_instance=new_dimension,
+                from_base_conversions=tuple(new_from_base_conversions_list),
+                rescale_value=new_rescale_value,
+                value=other,
+            )
+            return Scale(
+                dimension=new_dimension,
+                from_base_conversions=new_from_base_conversions,
+                rescale_value=new_value,
+            )
+        return TypeError(
+            f"{Scale} can only divide {Scale}, {int} or {float}. This operation is not implemented for {type(other)}."
+        )
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, (int, float)):
-            new_value = self.value **2
-            new_scale_conv = self.scale_conv**2
-            new_instance = type(self)(new_value)
-            new_instance.scale_conv = new_scale_conv
-            return new_instance
+            new_dimension = self.dimension * power
+            new_from_base_conversions = tuple(i**power for i in self.from_base_conversions)
+            new_rescale_value = self.rescale_value**power
+            return Scale(
+                dimension=new_dimension, from_base_conversions=new_from_base_conversions, rescale_value=new_rescale_value
+            )
+        return TypeError(
+            f"{Scale} can only be powered by {int} or {float}. This operation is not implemented for {type(other)}."
+        )
 
