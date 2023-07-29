@@ -2,7 +2,7 @@ import pytest
 
 from physities.src.entities.dimension import Dimension
 from physities.src.entities.scale.basescale import BaseScale
-from physities.src.enums.base_units import BaseUnit
+from physities.src.enums.base_units import BaseDimensions
 
 
 def _dimensions_group_test():
@@ -17,7 +17,7 @@ def dimensions_group_test():
 
 
 def _conversion_tuple_test():
-    return tuple(1 for i in BaseUnit)
+    return tuple(1 for i in BaseDimensions)
 
 
 @pytest.fixture()

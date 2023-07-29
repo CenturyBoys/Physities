@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 from physities.src.entities.dimension import Dimension
-from physities.src.enums.base_units import BaseUnit
+from physities.src.enums.base_units import BaseDimensions
 from physities.src.enums.length import (
     LengthType,
     to_default_length,
@@ -26,7 +26,7 @@ from physities.src.enums.time import TimeType, to_default_time, from_default_tim
 class PhysicalQuantity:
     value: float
     dimension: Dimension
-    scale: tuple[BaseUnit] = (
+    scale: tuple[BaseDimensions] = (
         LengthType.METER,
         MassType.KILOGRAM,
         TemperatureType.KELVIN,
@@ -145,7 +145,7 @@ class PhysicalQuantity:
         length_power = self.dimension.length
         if length_power == 0:
             return value
-        actual_type = self.scale[BaseUnit.LENGTH]
+        actual_type = self.scale[BaseDimensions.LENGTH]
         value = to_default_length[actual_type](value, length_power)
         value = from_default_length[length_type](value, length_power)
         return value
@@ -154,7 +154,7 @@ class PhysicalQuantity:
         mass_power = self.dimension.mass
         if mass_power == 0:
             return value
-        actual_type = self.scale[BaseUnit.MASS]
+        actual_type = self.scale[BaseDimensions.MASS]
         value = to_default_mass[actual_type](value, mass_power)
         value = from_default_mass[mass_type](value, mass_power)
         return value
@@ -163,7 +163,7 @@ class PhysicalQuantity:
         time_power = self.dimension.time
         if time_power == 0:
             return value
-        actual_type = self.scale[BaseUnit.TIME]
+        actual_type = self.scale[BaseDimensions.TIME]
         value = to_default_time[actual_type](value, time_power)
         value = from_default_time[time_type](value, time_power)
         return value
@@ -173,7 +173,7 @@ class PhysicalQuantity:
         if temperature_power == 0:
             return value
         temperature_inverse_power = 1 / temperature_power
-        actual_type = self.scale[BaseUnit.TEMPERATURE]
+        actual_type = self.scale[BaseDimensions.TEMPERATURE]
         value = value**temperature_inverse_power
         value = to_default_temperature[actual_type](value)
         value = from_default_temperature[temperature_type](value)
@@ -184,7 +184,7 @@ class PhysicalQuantity:
         quantity_power = self.dimension.amount
         if quantity_power:
             return value
-        actual_type = self.scale[BaseUnit.AMOUNT]
+        actual_type = self.scale[BaseDimensions.AMOUNT]
         value = to_default_quantity[actual_type](value, quantity_power)
         value = from_default_quantity[quantity_type](value, quantity_power)
         return value
@@ -195,21 +195,21 @@ class PhysicalQuantity:
         value = self.value
         scale = [i for i in self.scale]
         if length:
-            scale[BaseUnit.LENGTH] = length
+            scale[BaseDimensions.LENGTH] = length
             value = self._length_converter(value=value, length_type=length)
         if mass:
-            scale[BaseUnit.MASS] = mass
+            scale[BaseDimensions.MASS] = mass
             value = self._mass_converter(value=value, mass_type=mass)
         if time:
-            scale[BaseUnit.TIME] = time
+            scale[BaseDimensions.TIME] = time
             value = self._time_converter(value=value, time_type=time)
         if temperature:
-            scale[BaseUnit.TEMPERATURE] = temperature
+            scale[BaseDimensions.TEMPERATURE] = temperature
             value = self._temperature_converter(
                 value=value, temperature_type=temperature
             )
         if quantity:
-            scale[BaseUnit.AMOUNT] = quantity
+            scale[BaseDimensions.AMOUNT] = quantity
             value = self._quantity_converter(value=value, quantity_type=quantity)
         return self.__class__(dimension=self.dimension, value=value, scale=tuple(scale))
 

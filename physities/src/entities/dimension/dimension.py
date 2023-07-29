@@ -2,78 +2,97 @@ from dataclasses import dataclass
 from fractions import Fraction
 from typing import Self
 
-from physities.src.enums.base_units import BaseUnit
+from physities.src.enums.base_units import BaseDimensions
 
 
 @dataclass(frozen=True, slots=True)
 class Dimension:
-    dimensions_tuple: tuple[float, float, float, float, float]
+    dimensions_tuple: tuple[
+        float | int,
+        float | int,
+        float | int,
+        float | int,
+        float | int,
+        float | int,
+        float | int,
+    ]
 
     def __post_init__(self):
         if not isinstance(self.dimensions_tuple, tuple):
             raise TypeError(f"dimensions_tuple is not of the type {type(tuple)}.")
-        if len(self.dimensions_tuple) != len(BaseUnit):
+        if len(self.dimensions_tuple) != len(BaseDimensions):
             raise ValueError(
-                f"Invalid length of tuple. Expected {len(BaseUnit)}, but got {len(self.dimensions_tuple)}."
+                f"Invalid length of tuple. Expected {len(BaseDimensions)}, but got {len(self.dimensions_tuple)}."
             )
 
     @property
     def length(self):
-        return self.dimensions_tuple[BaseUnit.LENGTH]
+        return self.dimensions_tuple[BaseDimensions.LENGTH]
 
     @property
     def mass(self):
-        return self.dimensions_tuple[BaseUnit.MASS]
+        return self.dimensions_tuple[BaseDimensions.MASS]
 
     @property
     def temperature(self):
-        return self.dimensions_tuple[BaseUnit.TEMPERATURE]
+        return self.dimensions_tuple[BaseDimensions.TEMPERATURE]
 
     @property
     def time(self):
-        return self.dimensions_tuple[BaseUnit.TIME]
+        return self.dimensions_tuple[BaseDimensions.TIME]
 
     @property
     def amount(self):
-        return self.dimensions_tuple[BaseUnit.AMOUNT]
+        return self.dimensions_tuple[BaseDimensions.AMOUNT]
 
     @classmethod
     def new_time(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseUnit.TIME, power=power)
+        return cls.__new_base_unit(base_unit=BaseDimensions.TIME, power=power)
 
     @classmethod
     def new_length(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseUnit.LENGTH, power=power)
+        return cls.__new_base_unit(base_unit=BaseDimensions.LENGTH, power=power)
 
     @classmethod
     def new_temperature(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseUnit.TEMPERATURE, power=power)
+        return cls.__new_base_unit(base_unit=BaseDimensions.TEMPERATURE, power=power)
 
     @classmethod
     def new_mass(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseUnit.MASS, power=power)
+        return cls.__new_base_unit(base_unit=BaseDimensions.MASS, power=power)
 
     @classmethod
     def new_amount(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseUnit.AMOUNT, power=power)
+        return cls.__new_base_unit(base_unit=BaseDimensions.AMOUNT, power=power)
 
     @classmethod
-    def __new_base_unit(cls, base_unit: BaseUnit, power: float = None):
+    def __new_base_unit(cls, base_unit: BaseDimensions, power: float = None):
         if power is None:
             power = 1
         elif not isinstance(power, (int, float)):
             raise TypeError("The exponentiation must be a int or a float.")
-        dimensions_tuple = [0.0 for i in BaseUnit]
+        dimensions_tuple = [0.0 for i in BaseDimensions]
         dimensions_tuple[base_unit] = power
         return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
 
     @classmethod
-    def new_instance(cls, dimensions_tuple: tuple[float, float, float, float, float]):
+    def new_instance(
+        cls,
+        dimensions_tuple: tuple[
+            float | int,
+            float | int,
+            float | int,
+            float | int,
+            float | int,
+            float | int,
+            float | int,
+        ],
+    ):
         return cls(dimensions_tuple=dimensions_tuple)
 
     def get_dimensions(self):
         return [
-            BaseUnit(i)
+            BaseDimensions(i)
             for i in range(len(self.dimensions_tuple))
             if self.dimensions_tuple[i] != 0
         ]
@@ -154,11 +173,11 @@ class Dimension:
 
     def show_dimension(self):
         symbols = {
-            BaseUnit.LENGTH: "L",
-            BaseUnit.MASS: "m",
-            BaseUnit.TIME: "t",
-            BaseUnit.TEMPERATURE: "T",
-            BaseUnit.AMOUNT: "N",
+            BaseDimensions.LENGTH: "L",
+            BaseDimensions.MASS: "m",
+            BaseDimensions.TIME: "t",
+            BaseDimensions.TEMPERATURE: "T",
+            BaseDimensions.AMOUNT: "N",
         }
         number_str_to_power_str = {
             "0": "⁰",
@@ -185,9 +204,9 @@ class Dimension:
                 power = abs(power)
             power_str = "".join([number_str_to_power_str[i] for i in str(power)])
             if is_numerator:
-                numerator += f"{symbols[BaseUnit(i)]}{power_str}"
+                numerator += f"{symbols[BaseDimensions(i)]}{power_str}"
             else:
-                denominator += f"{symbols[BaseUnit(i)]}{power_str}"
+                denominator += f"{symbols[BaseDimensions(i)]}{power_str}"
         if not denominator:
             to_print = f"{numerator}"
             print()

@@ -5,7 +5,7 @@ class Scale(StrEnum):
     M = "m"
 
 
-class BaseUnit:
+class BaseDimensions:
     d: float
     s: Scale
     v: float
@@ -18,7 +18,7 @@ class BaseUnit:
     def __repr__(self):
         if self.v is None:
             return f"BaseUnitDefinition(dimension={self.d}, scale={self.s})"
-        return f"BaseUnit(dimension={self.d}, scale={self.s}, value={self.v})"
+        return f"BaseDimensions(dimension={self.d}, scale={self.s}, value={self.v})"
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):

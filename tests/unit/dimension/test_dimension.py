@@ -1,14 +1,14 @@
 import pytest as pytest
 
 from physities.src.entities.dimension import Dimension
-from physities.src.enums.base_units import BaseUnit
+from physities.src.enums.base_units import BaseDimensions
 
 
 @pytest.mark.unit
 class TestDimension:
     @staticmethod
     def test_instantiation_success():
-        obj_dimension = Dimension(dimensions_tuple=tuple(i for i in BaseUnit))
+        obj_dimension = Dimension(dimensions_tuple=tuple(i for i in BaseDimensions))
         assert isinstance(obj_dimension, Dimension)
 
     @staticmethod
@@ -30,7 +30,7 @@ class TestDimension:
                 obj_dimension = Dimension(dimensions_tuple=invalid_tuple)
             assert (
                 str(error.value)
-                == f"Invalid length of tuple. Expected {len(BaseUnit)}, but got {len(invalid_tuple)}."
+                == f"Invalid length of tuple. Expected {len(BaseDimensions)}, but got {len(invalid_tuple)}."
             )
 
     @staticmethod
@@ -61,14 +61,14 @@ class TestDimension:
             Dimension.new_temperature,
         ]
         expected_tuple = [
-            BaseUnit.TIME,
-            BaseUnit.LENGTH,
-            BaseUnit.AMOUNT,
-            BaseUnit.MASS,
-            BaseUnit.TEMPERATURE,
+            BaseDimensions.TIME,
+            BaseDimensions.LENGTH,
+            BaseDimensions.AMOUNT,
+            BaseDimensions.MASS,
+            BaseDimensions.TEMPERATURE,
         ]
         for index in range(len(new_methods)):
-            expec_dim_tuple = [0 for i in BaseUnit]
+            expec_dim_tuple = [0 for i in BaseDimensions]
             dimension = new_methods[index](power=3.5)
             expec_dim_tuple[expected_tuple[index]] = 3.5
             assert type(dimension) == Dimension
