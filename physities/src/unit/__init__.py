@@ -92,15 +92,15 @@ Microsecond = 0.000001 * Second
 Millisecond = 0.001 * Second
 Centisecond = 0.01 * Second
 Decisecond = 0.1 * Second
-Minutes = 60 * Second
-Hours = 3600 * Second
-Days = 86400 * Second
-Weeks = 604800 * Second
-Months = 2628288 * Second
-Years = 31557600 * Second
+Minute = 60 * Second
+Hour = 3600 * Second
+Day = 86400 * Second
+Week = 604800 * Second
+Month = 2628288 * Second
+Year = 31557600 * Second
 Decade = 315576000 * Second
 Century = 3155760000 * Second
-Millennium = 31557600000 * Second
+Millennium = 31_557_600_000 * Second
 
 #Unit
 

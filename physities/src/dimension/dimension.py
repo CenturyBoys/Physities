@@ -216,5 +216,5 @@ class Dimension:
             print()
         else:
             to_print = f"{numerator} / {denominator}"
-        print(to_print)
+        # print(to_print)
         return to_print

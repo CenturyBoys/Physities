@@ -15,15 +15,12 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == "__main__":
-    c2 = Centimetre*Centimetre
-    l = c2(5).convert(unit=Metre2)
-    c = Centimetre(10)
-    s1 = time.time()
-    lala = c*3
-    t1 = time.time() - s1
-    s2 = time.time()
-    lala = 10*3
-    t2 = time.time() - s2
-    print(f't1: {t1}, t2: {t2}, t2-t1: {t2-t1}, t2/t1: {t2/t1}')
+    Ms = Metre/Second
+    Kh = Kilometre/Hour
+    v1 = Ms(40)
+    v2 = Kh(144)
+    v3 = v2.convert(Ms)
+    l = v3 * v1
+    print()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

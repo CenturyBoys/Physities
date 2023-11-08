@@ -51,13 +51,19 @@ class Unit(metaclass=MetaUnit):
     def __init__(self, value):
         self.value = value
 
+    # def __repr__(self):
+    #     return f"{self.value} {self.scale.dimension.show_dimension()}"
+    #
+    # def __str__(self):
+    #     return f"{self.value} {self.scale.dimension.show_dimension()}"
+
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             new_value = self.value * other
             new_instance = type(self)(new_value)
             new_instance.scale = self.scale
             return new_instance
-        if isinstance(other, type(self)):
+        if isinstance(other, Unit):
             new_scale = self.scale * other.scale
             new_value = self.value * other.value
             new_instance = type(self)(new_value)
@@ -78,7 +84,7 @@ class Unit(metaclass=MetaUnit):
             new_instance = type(self)(new_value)
             new_instance.scale = self.scale
             return new_instance
-        if isinstance(other, type(self)):
+        if isinstance(other, Unit):
             new_scale = self.scale / other.scale
             new_value = self.value / other.value
             new_instance = type(self)(new_value)
