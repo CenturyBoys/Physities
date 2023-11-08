@@ -1,3 +1,4 @@
+from math import prod
 from dataclasses import dataclass
 
 from physities.src.dimension import Dimension
@@ -11,6 +12,10 @@ class Scale:
         float, float, float, float, float, float, float
     ]
     rescale_value: float
+
+    @property
+    def conversion_factor(self) -> float:
+        return self.rescale_value * prod(self.from_base_conversions)
 
     @staticmethod
     def __get_annulled_dimension(
