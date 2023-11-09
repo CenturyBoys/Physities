@@ -75,6 +75,10 @@ class Dimension:
         return cls.__new_base_unit(base_unit=BaseDimension.LUMINOUS_INTENSITY, power=power)
 
     @classmethod
+    def new_dimensionless(cls) -> Self:
+        return Dimension(dimensions_tuple=(0., 0., 0., 0., 0., 0., 0.))
+
+    @classmethod
     def __new_base_unit(cls, base_unit: BaseDimension, power: float = None):
         if power is None:
             power = 1
@@ -89,7 +93,7 @@ class Dimension:
         cls,
         dimensions_tuple: tuple[float, float, float, float, float, float, float],
     ):
-        return cls(dimensions_tuple=dimensions_tuple)
+        return Dimension(dimensions_tuple=dimensions_tuple)
 
     def get_dimensions(self):
         return [

@@ -6,6 +6,7 @@ from physities.src.scale.scale import Scale
 class MetaUnit(type):
     scale: Scale
 
+
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             new_scale = self.scale * other
@@ -51,11 +52,40 @@ class Unit(metaclass=MetaUnit):
     def __init__(self, value):
         self.value = value
 
-    # def __repr__(self):
-    #     return f"{self.value} {self.scale.dimension.show_dimension()}"
-    #
-    # def __str__(self):
-    #     return f"{self.value} {self.scale.dimension.show_dimension()}"
+    def __eq__(self, other):
+        if isinstance(other, Unit) and self.scale.dimension == other.scale.dimension:
+            if self.value == other.convert(self).value:
+                return True
+        return False
+
+    def __repr__(self):
+        dimension = self.scale.dimension.show_dimension()
+        if not dimension:
+            return f"{self.value} (Scalar)"
+        return f"{self.value} ({dimension})"
+
+    def __str__(self):
+        return f"{self.value}"
+
+    def __add__(self, other):
+        if isinstance(other, Unit):
+            if self.scale.dimension == other.scale.dimension:
+                new_value = self.value + other.convert(self).value
+                new_instance = type(self)(new_value)
+                new_instance.scale = self.scale
+                return new_instance
+            raise TypeError(f"Dimensions do not match")
+        raise TypeError
+
+    def __sub__(self, other):
+        if isinstance(other, Unit):
+            if self.scale.dimension == other.scale.dimension:
+                new_value = self.value - other.convert(self).value
+                new_instance = type(self)(new_value)
+                new_instance.scale = self.scale
+                return new_instance
+            raise TypeError(f"Dimensions do not match")
+        raise TypeError
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -66,6 +96,9 @@ class Unit(metaclass=MetaUnit):
         if isinstance(other, Unit):
             new_scale = self.scale * other.scale
             new_value = self.value * other.value
+            if new_scale.is_dimensionless:
+                new_value *= new_scale.conversion_factor
+                new_scale = Scale.new()
             new_instance = type(self)(new_value)
             new_instance.scale = new_scale
             return new_instance
@@ -87,6 +120,9 @@ class Unit(metaclass=MetaUnit):
         if isinstance(other, Unit):
             new_scale = self.scale / other.scale
             new_value = self.value / other.value
+            if new_scale.is_dimensionless:
+                new_value *= new_scale.conversion_factor
+                new_scale = Scale.new()
             new_instance = type(self)(new_value)
             new_instance.scale = new_scale
             return new_instance
@@ -104,10 +140,17 @@ class Unit(metaclass=MetaUnit):
     def __pow__(self, power, modulo=None):
         if isinstance(power, (int, float)):
             new_value = self.value ** 2
-            new_scale = self.scale ** 2
             new_instance = type(self)(new_value)
+            new_scale = self.scale ** 2
             new_instance.scale = new_scale
             return new_instance
+
+    def to_si(self):
+        new_value = self.value * self.scale.conversion_factor
+        new_instance = type(self)(new_value)
+        new_scale = Scale.new(dimension=self.scale.dimension)
+        new_instance.scale = new_scale
+        return new_instance
 
     def convert(self, unit: Self) -> Self:
         if self.scale.dimension == unit.scale.dimension:

@@ -21,6 +21,7 @@ if __name__ == "__main__":
     v2 = Kh(144)
     v3 = v2.convert(Ms)
     l = v3 * v1
+    c = v1 == v2
     print()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

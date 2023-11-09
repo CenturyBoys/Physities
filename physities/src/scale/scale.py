@@ -13,6 +13,23 @@ class Scale:
     ]
     rescale_value: float
 
+    @classmethod
+    def new(
+            cls,
+            dimension: Dimension = Dimension.new_dimensionless(),
+            from_base_conversions: tuple[
+                float, float, float, float, float, float, float
+            ] = (1., 1., 1., 1., 1., 1., 1.),
+            rescale_value: float = 1
+    ):
+        return cls(dimension=dimension, from_base_conversions=from_base_conversions, rescale_value=rescale_value)
+
+    @property
+    def is_dimensionless(self) -> bool:
+        if not self.dimension.get_dimensions():
+            return True
+        return False
+
     @property
     def conversion_factor(self) -> float:
         return self.rescale_value * prod(self.from_base_conversions)
@@ -43,6 +60,13 @@ class Scale:
             new_from_base_conversions = tuple(from_base_conversions_list)
             return 1, new_from_base_conversions
         return rescale_value * value, from_base_conversions
+
+    def __eq__(self, other):
+        if isinstance(other, Scale):
+            if self.dimension == other.dimension and self.from_base_conversions == other.from_base_conversions:
+                return True
+        return False
+
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -121,7 +145,7 @@ class Scale:
             ]
             for annulled_index in annulled_dimensions:
                 rescale_factor *= new_from_base_conversions_list[annulled_index]
-                new_from_base_conversions_list[annulled_index] = 1
+                new_from_base_conversions_list[annulled_index] = 1.
             new_value, new_from_base_conversions = self.__fit_scale_and_dimension(
                 dimension_instance=new_dimension,
                 from_base_conversions=tuple(new_from_base_conversions_list),
