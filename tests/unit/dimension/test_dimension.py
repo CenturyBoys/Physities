@@ -6,6 +6,7 @@ from physities.src.dimension.base_dimensions import BaseDimension
 
 @pytest.mark.unit
 class TestDimension:
+
     @staticmethod
     def test_instantiation_success():
         obj_dimension = Dimension(dimensions_tuple=tuple(i for i in BaseDimension))
@@ -80,11 +81,11 @@ class TestDimension:
             pass
 
         class B:
-            dimensions_tuple = (1, 2, 3, 4, 5)
+            dimensions_tuple = (1, 2, 3, 4, 5, 6, 7)
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5))
-        dimension_3 = A.new_instance(dimensions_tuple=(1, 2, 3, 4, 5))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5, 6, 7))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5, 6, 7))
+        dimension_3 = A.new_instance(dimensions_tuple=(1, 2, 3, 4, 5, 6, 7))
         dimension_4 = B()
         assert dimension_2 == dimension_1
         assert dimension_3 == dimension_1
@@ -96,28 +97,28 @@ class TestDimension:
         class A(Dimension):
             pass
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(5, 4, 3, 2, 1))
-        dimension_3 = A.new_instance(dimensions_tuple=(5, 4, 3, 2, 1))
-        dimension_4 = Dimension.new_instance(dimensions_tuple=(-1, -2, -3, -4, -5))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5, 6, 7))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(7, 6, 5, 4, 3, 2, 1))
+        dimension_3 = A.new_instance(dimensions_tuple=(7, 6, 5, 4, 3, 2, 1))
+        dimension_4 = Dimension.new_instance(dimensions_tuple=(-1, -2, -3, -4, -5, -6, -7))
         dimension_result_1 = dimension_1 + dimension_2
         dimension_result_2 = dimension_2 + dimension_1
         dimension_result_3 = dimension_3 + dimension_1
         dimension_result_4 = dimension_1 + dimension_4
         assert isinstance(dimension_result_1, Dimension)
-        assert dimension_result_1.dimensions_tuple == (6, 6, 6, 6, 6)
+        assert dimension_result_1.dimensions_tuple == (8, 8, 8, 8, 8, 8, 8)
         assert isinstance(dimension_result_2, Dimension)
-        assert dimension_result_2.dimensions_tuple == (6, 6, 6, 6, 6)
-        assert dimension_result_4.dimensions_tuple == (0, 0, 0, 0, 0)
-        assert dimension_result_3.dimensions_tuple == (6, 6, 6, 6, 6)
+        assert dimension_result_2.dimensions_tuple == (8, 8, 8, 8, 8, 8, 8)
+        assert dimension_result_4.dimensions_tuple == (0, 0, 0, 0, 0, 0, 0)
+        assert dimension_result_3.dimensions_tuple == (8, 8, 8, 8, 8, 8, 8)
 
     @staticmethod
     def test_addition_invalid():
         class B:
-            dimensions_tuple = (1, 2, 3, 4, 5)
+            dimensions_tuple = (1, 2, 3, 4, 5, 6, 7)
 
         dimension_1 = B()
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(5, 4, 3, 2, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(7, 6, 5, 4, 3, 2, 1))
         tests = [(dimension_1, dimension_2), (dimension_2, 1), (dimension_2, [])]
         for test in tests:
             with pytest.raises(TypeError) as error:
@@ -132,25 +133,25 @@ class TestDimension:
         class A(Dimension):
             pass
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
-        dimension_3 = A.new_instance(dimensions_tuple=(2, 1, 1, 1, 1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
+        dimension_3 = A.new_instance(dimensions_tuple=(2, 1, 1, 1, 1, 1, 1))
         dimension_result_1 = dimension_1 - dimension_2
         dimension_result_2 = dimension_2 - dimension_1
         dimension_result_3 = dimension_3 - dimension_1
         assert isinstance(dimension_result_1, Dimension)
-        assert dimension_result_1.dimensions_tuple == (0, 0, 0, 0, 2)
+        assert dimension_result_1.dimensions_tuple == (0, 0, 0, 0, 2, 0, 0)
         assert isinstance(dimension_result_2, Dimension)
-        assert dimension_result_2.dimensions_tuple == (0, 0, 0, 0, -2)
-        assert dimension_result_3.dimensions_tuple == (1, 0, 0, 0, 0)
+        assert dimension_result_2.dimensions_tuple == (0, 0, 0, 0, -2, 0, 0)
+        assert dimension_result_3.dimensions_tuple == (1, 0, 0, 0, 0, 0, 0)
 
     @staticmethod
     def test_subtraction_invalid():
         class B:
-            dimensions_tuple = (1, 2, 3, 4, 5)
+            dimensions_tuple = (1, 2, 3, 4, 5, 6, 7)
 
         dimension_1 = B()
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(5, 4, 3, 2, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(7, 6, 5, 4, 3, 2, 1))
         tests = [(dimension_1, dimension_2), (dimension_2, 1), (dimension_2, [])]
         for test in tests:
             with pytest.raises(TypeError) as error:
@@ -165,25 +166,25 @@ class TestDimension:
         class A(Dimension):
             pass
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
-        dimension_3 = A.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
+        dimension_3 = A.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
         result_1 = -3 * dimension_1
         result_2 = dimension_2 * -3
         result_3 = 0.5 * dimension_2
         result_4 = -1.24 * dimension_3
-        assert result_1.dimensions_tuple == (-3, -3, -3, -3, -3)
-        assert result_2.dimensions_tuple == (-3, -3, -3, -3, 3)
-        assert result_3.dimensions_tuple == (0.5, 0.5, 0.5, 0.5, -0.5)
-        assert result_4.dimensions_tuple == (-1.24, -1.24, -1.24, -1.24, 1.24)
+        assert result_1.dimensions_tuple == (-3, -3, -3, -3, -3, -3, -3)
+        assert result_2.dimensions_tuple == (-3, -3, -3, -3, 3, -3, -3)
+        assert result_3.dimensions_tuple == (0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5)
+        assert result_4.dimensions_tuple == (-1.24, -1.24, -1.24, -1.24, 1.24, -1.24, -1.24)
 
     @staticmethod
     def test_multiplication_invalid():
         class B:
-            dimensions_tuple = (1, 2, 3, 4, 5)
+            dimensions_tuple = (1, 2, 3, 4, 5, 6, 7)
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
         dimension_3 = B()
         tests = [
             (dimension_1, dimension_2),
@@ -204,24 +205,24 @@ class TestDimension:
         class A(Dimension):
             pass
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_3 = A.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_3 = A.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
         result_1 = dimension_1 / 5
         result_2 = 5 / dimension_1
         result_3 = dimension_3 / 4
         result_4 = 4.35 / dimension_3
-        assert result_1.dimensions_tuple == (0.2, 0.2, 0.2, 0.2, 0.2)
-        assert result_2.dimensions_tuple == (5, 5, 5, 5, 5)
-        assert result_3.dimensions_tuple == (0.25, 0.25, 0.25, 0.25, -0.25)
-        assert result_4.dimensions_tuple == (4.35, 4.35, 4.35, 4.35, -4.35)
+        assert result_1.dimensions_tuple == (0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2)
+        assert result_2.dimensions_tuple == (5, 5, 5, 5, 5, 5, 5)
+        assert result_3.dimensions_tuple == (0.25, 0.25, 0.25, 0.25, -0.25, 0.25, 0.25)
+        assert result_4.dimensions_tuple == (4.35, 4.35, 4.35, 4.35, -4.35, 4.35, 4.35)
 
     @staticmethod
     def test_division_invalid():
         class B:
-            dimensions_tuple = (1, 2, 3, 4, 5)
+            dimensions_tuple = (1, 2, 3, 4, 5, 6, 7)
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
         dimension_3 = B()
         tests = [
             (dimension_1, dimension_2),
@@ -240,10 +241,10 @@ class TestDimension:
             pass
 
         class B:
-            dimensions_tuple = (1, 2, 3, 4, 5)
+            dimensions_tuple = (1, 2, 3, 4, 5, 6, 7)
 
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_2 = A.new_instance(dimensions_tuple=(1, 1, 1, 1, -1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_2 = A.new_instance(dimensions_tuple=(1, 1, 1, 1, -1, 1, 1))
         dimension_3 = B()
         tests = [
             (dimension_1, dimension_2),
@@ -258,9 +259,9 @@ class TestDimension:
 
     @staticmethod
     def test_show_dimension():
-        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(-1, -1, -1, -1, -1))
-        dimension_3 = Dimension.new_instance(dimensions_tuple=(19, 0.75, 4, -0.3333, 1))
+        dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
+        dimension_2 = Dimension.new_instance(dimensions_tuple=(-1, -1, -1, -1, -1, 0, 0))
+        dimension_3 = Dimension.new_instance(dimensions_tuple=(19, 0.75, 4, -0.3333, 1, 0, 0))
         assert dimension_1.show_dimension() == "L¹m¹T¹t¹N¹"
         assert dimension_2.show_dimension() == "1 / L¹m¹T¹t¹N¹"
         assert dimension_3.show_dimension() == "L¹⁹m⁰ˑ⁷⁵T⁴N¹ / t⁰ˑ³³³³"

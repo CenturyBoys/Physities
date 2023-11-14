@@ -7,6 +7,13 @@ from physities.src.dimension.base_dimensions import BaseDimension
 
 @dataclass(frozen=True, slots=True)
 class Scale:
+    """
+        dimension:
+
+        from_base_conversions:
+
+        rescale_value:
+    """
     dimension: Dimension
     from_base_conversions: tuple[
         float, float, float, float, float, float, float

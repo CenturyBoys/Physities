@@ -183,6 +183,8 @@ class Dimension:
             BaseDimension.TIME: "t",
             BaseDimension.TEMPERATURE: "T",
             BaseDimension.AMOUNT: "N",
+            BaseDimension.ELECTRIC_CURRENT: "I",
+            BaseDimension.LUMINOUS_INTENSITY: "Iᵥ"
         }
         number_str_to_power_str = {
             "0": "⁰",
