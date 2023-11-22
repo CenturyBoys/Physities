@@ -262,6 +262,6 @@ class TestDimension:
         dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
         dimension_2 = Dimension.new_instance(dimensions_tuple=(-1, -1, -1, -1, -1, 0, 0))
         dimension_3 = Dimension.new_instance(dimensions_tuple=(19, 0.75, 4, -0.3333, 1, 0, 0))
-        assert dimension_1.show_dimension() == "L¹m¹T¹t¹N¹"
+        assert dimension_1.show_dimension() == 'L¹m¹T¹t¹N¹I¹Iᵥ¹'
         assert dimension_2.show_dimension() == "1 / L¹m¹T¹t¹N¹"
         assert dimension_3.show_dimension() == "L¹⁹m⁰ˑ⁷⁵T⁴N¹ / t⁰ˑ³³³³"

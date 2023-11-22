@@ -1,12 +1,14 @@
 from math import prod
 from dataclasses import dataclass
 
+from kobject import Kobject
+
 from physities.src.dimension import Dimension
 from physities.src.dimension.base_dimensions import BaseDimension
 
 
 @dataclass(frozen=True, slots=True)
-class Scale:
+class Scale(Kobject):
     """
         dimension:
 
@@ -16,9 +18,21 @@ class Scale:
     """
     dimension: Dimension
     from_base_conversions: tuple[
-        float, float, float, float, float, float, float
+        float | int, float | int, float | int, float | int, float | int, float | int, float | int
     ]
-    rescale_value: float
+    rescale_value: float | int
+
+    # def __post_init__(self):
+    #     if not isinstance(self.dimension, Dimension):
+    #         raise TypeError(f"dimension is not of the type {type(Dimension)}.")
+    #     if not isinstance(self.from_base_conversions, tuple):
+    #         raise TypeError(f"from_base_conversions is not of the type {type(tuple)}.")
+    #     if len(self.from_base_conversions) != len(BaseDimension):
+    #         raise ValueError(
+    #             f"Invalid length of tuple. Expected {len(BaseDimension)}, but got {len(self.from_base_conversions)}."
+    #         )
+    #     if not isinstance(self.rescale_value, float):
+    #         raise TypeError(f"rescale_value is not of the type {type(float)} ou {type(int)}.")
 
     @classmethod
     def new(
