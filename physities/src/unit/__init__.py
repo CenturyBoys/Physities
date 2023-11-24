@@ -6,8 +6,8 @@ from .unit import Unit
 class Metre(Unit):
     scale = Scale(
         dimension=Dimension.new_length(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -15,8 +15,8 @@ class Metre(Unit):
 class Second(Unit):
     scale = Scale(
         dimension=Dimension.new_time(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -24,8 +24,8 @@ class Second(Unit):
 class Gram(Unit):
     scale = Scale(
         dimension=Dimension.new_mass(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -33,8 +33,8 @@ class Gram(Unit):
 class Kelvin(Unit):
     scale = Scale(
         dimension=Dimension.new_temperature(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -42,8 +42,8 @@ class Kelvin(Unit):
 class Unity(Unit):
     scale = Scale(
         dimension=Dimension.new_amount(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -51,8 +51,8 @@ class Unity(Unit):
 class Ampere(Unit):
     scale = Scale(
         dimension=Dimension.new_electric_current(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -60,8 +60,8 @@ class Ampere(Unit):
 class Candela(Unit):
     scale = Scale(
         dimension=Dimension.new_luminous_intensity(),
-        from_base_conversions=(1., 1., 1., 1., 1., 1., 1.),
-        rescale_value=1
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+        rescale_value=1,
     )
     value = None
 
@@ -102,14 +102,14 @@ Decade = 315576000 * Second
 Century = 3155760000 * Second
 Millennium = 31_557_600_000 * Second
 
-#Unit
+# Unit
 
 Dozen = 12 * Unity
 Moles = 6.02214076 * 10**23 * Unity
 Pairs = 2 * Unity
 Score = 20 * Unity
 
-#Mass
+# Mass
 
 Gigagram = 1000000000 * Gram
 Megagram = 1000000 * Gram
@@ -129,7 +129,7 @@ Carat = 0.0002 * Gram
 Grain = 0.0000647989 * Gram
 Slug = 14.5939 * Gram
 
-#Eletric Current
+# Eletric Current
 
 Gigaampere = 1000000000 * Ampere
 Megaampere = 1000000 * Ampere
@@ -138,7 +138,7 @@ Milliampere = 0.001 * Ampere
 Microampere = 0.000001 * Ampere
 Nanoampere = 0.000000001 * Ampere
 
-#Area
+# Area
 
 Gigametre2 = Gigametre * Gigametre
 Megametre2 = Megametre * Megametre
@@ -159,7 +159,7 @@ Furlong2 = Furlong * Furlong
 Rod2 = Rod * Rod
 Acre = 4046.860107422 * Metre2
 
-#Volume
+# Volume
 
 Gigametre3 = Gigametre2 * Gigametre
 Megametre3 = Megametre2 * Megametre
@@ -181,5 +181,3 @@ Rod3 = Rod2 * Rod
 Gallon = 3785.411784 * Milliliter
 Pint = 473 * Milliliter
 Barrel = 0.158987294928 * Metre3
-
-

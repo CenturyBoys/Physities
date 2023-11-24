@@ -7,7 +7,13 @@ from physities.src.dimension.base_dimensions import BaseDimension
 @dataclass(frozen=True, slots=True)
 class Dimension:
     dimensions_tuple: tuple[
-        float, float, float, float, float, float, float,
+        float,
+        float,
+        float,
+        float,
+        float,
+        float,
+        float,
     ]
 
     def __post_init__(self):
@@ -68,15 +74,19 @@ class Dimension:
 
     @classmethod
     def new_electric_current(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseDimension.ELECTRIC_CURRENT, power=power)
+        return cls.__new_base_unit(
+            base_unit=BaseDimension.ELECTRIC_CURRENT, power=power
+        )
 
     @classmethod
     def new_luminous_intensity(cls, power: float = None) -> Self:
-        return cls.__new_base_unit(base_unit=BaseDimension.LUMINOUS_INTENSITY, power=power)
+        return cls.__new_base_unit(
+            base_unit=BaseDimension.LUMINOUS_INTENSITY, power=power
+        )
 
     @classmethod
     def new_dimensionless(cls) -> Self:
-        return Dimension(dimensions_tuple=(0., 0., 0., 0., 0., 0., 0.))
+        return Dimension(dimensions_tuple=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
 
     @classmethod
     def __new_base_unit(cls, base_unit: BaseDimension, power: float = None):
@@ -101,6 +111,9 @@ class Dimension:
             for i in range(len(self.dimensions_tuple))
             if self.dimensions_tuple[i] != 0
         ]
+
+    def get(self, index: BaseDimension):
+        return self.dimensions_tuple[index]
 
     def __add__(self, other):
         if isinstance(other, Dimension):
@@ -184,7 +197,7 @@ class Dimension:
             BaseDimension.TEMPERATURE: "T",
             BaseDimension.AMOUNT: "N",
             BaseDimension.ELECTRIC_CURRENT: "I",
-            BaseDimension.LUMINOUS_INTENSITY: "Iᵥ"
+            BaseDimension.LUMINOUS_INTENSITY: "Iᵥ",
         }
         number_str_to_power_str = {
             "0": "⁰",

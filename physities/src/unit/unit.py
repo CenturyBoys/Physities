@@ -6,7 +6,6 @@ from physities.src.scale.scale import Scale
 class MetaUnit(type):
     scale: Scale
 
-
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             new_scale = self.scale * other
@@ -14,7 +13,9 @@ class MetaUnit(type):
         if isinstance(other, MetaUnit):
             new_scale = self.scale * other.scale
             return type(f"Unit", (Unit,), {"scale": new_scale, "value": None})
-        raise TypeError(f"{self} only allows multiplication by {self}, {int}, and {float}")
+        raise TypeError(
+            f"{self} only allows multiplication by {self}, {int}, and {float}"
+        )
 
     def __rmul__(self, other):
         try:
@@ -40,7 +41,7 @@ class MetaUnit(type):
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, (int, float)):
-            new_scale = self.scale ** power
+            new_scale = self.scale**power
             return type(f"Unit", (Unit,), {"scale": new_scale, "value": None})
         raise TypeError(f"{self} can only be powered by {int} and {float}")
 
@@ -139,9 +140,9 @@ class Unit(metaclass=MetaUnit):
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, (int, float)):
-            new_value = self.value ** 2
+            new_value = self.value**2
             new_instance = type(self)(new_value)
-            new_scale = self.scale ** 2
+            new_scale = self.scale**2
             new_instance.scale = new_scale
             return new_instance
 
@@ -154,7 +155,9 @@ class Unit(metaclass=MetaUnit):
 
     def convert(self, unit: Self) -> Self:
         if self.scale.dimension == unit.scale.dimension:
-            new_value = self.value * self.scale.conversion_factor / unit.scale.conversion_factor
+            new_value = (
+                self.value * self.scale.conversion_factor / unit.scale.conversion_factor
+            )
             new_instance = type(self)(new_value)
             new_instance.scale = unit.scale
             return new_instance

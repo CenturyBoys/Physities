@@ -6,7 +6,6 @@ from physities.src.dimension.base_dimensions import BaseDimension
 
 @pytest.mark.unit
 class TestDimension:
-
     @staticmethod
     def test_instantiation_success():
         obj_dimension = Dimension(dimensions_tuple=tuple(i for i in BaseDimension))
@@ -100,7 +99,9 @@ class TestDimension:
         dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 2, 3, 4, 5, 6, 7))
         dimension_2 = Dimension.new_instance(dimensions_tuple=(7, 6, 5, 4, 3, 2, 1))
         dimension_3 = A.new_instance(dimensions_tuple=(7, 6, 5, 4, 3, 2, 1))
-        dimension_4 = Dimension.new_instance(dimensions_tuple=(-1, -2, -3, -4, -5, -6, -7))
+        dimension_4 = Dimension.new_instance(
+            dimensions_tuple=(-1, -2, -3, -4, -5, -6, -7)
+        )
         dimension_result_1 = dimension_1 + dimension_2
         dimension_result_2 = dimension_2 + dimension_1
         dimension_result_3 = dimension_3 + dimension_1
@@ -176,7 +177,15 @@ class TestDimension:
         assert result_1.dimensions_tuple == (-3, -3, -3, -3, -3, -3, -3)
         assert result_2.dimensions_tuple == (-3, -3, -3, -3, 3, -3, -3)
         assert result_3.dimensions_tuple == (0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5)
-        assert result_4.dimensions_tuple == (-1.24, -1.24, -1.24, -1.24, 1.24, -1.24, -1.24)
+        assert result_4.dimensions_tuple == (
+            -1.24,
+            -1.24,
+            -1.24,
+            -1.24,
+            1.24,
+            -1.24,
+            -1.24,
+        )
 
     @staticmethod
     def test_multiplication_invalid():
@@ -260,8 +269,12 @@ class TestDimension:
     @staticmethod
     def test_show_dimension():
         dimension_1 = Dimension.new_instance(dimensions_tuple=(1, 1, 1, 1, 1, 1, 1))
-        dimension_2 = Dimension.new_instance(dimensions_tuple=(-1, -1, -1, -1, -1, 0, 0))
-        dimension_3 = Dimension.new_instance(dimensions_tuple=(19, 0.75, 4, -0.3333, 1, 0, 0))
-        assert dimension_1.show_dimension() == 'L¹m¹T¹t¹N¹I¹Iᵥ¹'
+        dimension_2 = Dimension.new_instance(
+            dimensions_tuple=(-1, -1, -1, -1, -1, 0, 0)
+        )
+        dimension_3 = Dimension.new_instance(
+            dimensions_tuple=(19, 0.75, 4, -0.3333, 1, 0, 0)
+        )
+        assert dimension_1.show_dimension() == "L¹m¹T¹t¹N¹I¹Iᵥ¹"
         assert dimension_2.show_dimension() == "1 / L¹m¹T¹t¹N¹"
         assert dimension_3.show_dimension() == "L¹⁹m⁰ˑ⁷⁵T⁴N¹ / t⁰ˑ³³³³"

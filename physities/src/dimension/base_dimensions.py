@@ -9,4 +9,3 @@ class BaseDimension(IntEnum):
     AMOUNT = 4
     ELECTRIC_CURRENT = 5
     LUMINOUS_INTENSITY = 6
-
