@@ -29,6 +29,16 @@ class Scale(Kobject):
     ]
     rescale_value: float | int
 
+    def __post_init__(self):
+        if not isinstance(self.dimension, Dimension):
+            raise TypeError(f"Property 'dimension' is not of the type {type(Dimension)}.")
+        if not isinstance(self.from_base_scale_conversions, tuple):
+            raise TypeError(f"from_base_scale_conversions is not of the type {type(tuple)}.")
+        if len(self.from_base_scale_conversions) != len(BaseDimension):
+            raise ValueError(
+                f"Invalid length of from_base_scale_conversions. Expected {len(BaseDimension)}, but got {len(self.from_base_scale_conversions)}."
+            )
+
     @classmethod
     def new(
         cls,
@@ -58,6 +68,7 @@ class Scale(Kobject):
     def __get_annulled_dimension(
         dimension_1: Dimension, dimension_2: Dimension, result_dimension: Dimension
     ) -> list[
+        BaseDimension,
         BaseDimension,
         BaseDimension,
         BaseDimension,
@@ -228,6 +239,6 @@ class Scale(Kobject):
                 from_base_scale_conversions=new_from_base_scale_conversions,
                 rescale_value=new_rescale_value,
             )
-        return TypeError(
-            f"{Scale} can only be powered by {int} or {float}. This operation is not implemented for {type(other)}."
+        raise TypeError(
+            f"{Scale} can only be powered by {int} or {float}. This operation is not implemented for {type(power)}."
         )

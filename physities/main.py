@@ -15,8 +15,8 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == "__main__":
-    Ms = Metre / Second
-    Kh = Kilometre / Hour
+    Ms = Meter / Second
+    Kh = Kilometer / Hour
     v1 = Ms(40)
     v2 = Kh(144)
     v3 = v2.convert(Ms)

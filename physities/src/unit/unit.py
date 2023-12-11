@@ -1,10 +1,17 @@
 from typing import Self
 
+from kobject import Kobject
+
 from physities.src.scale.scale import Scale
 
 
 class MetaUnit(type):
     scale: Scale
+
+    def __eq__(self, other):
+        if isinstance(other, MetaUnit) and self.scale.dimension == other.scale.dimension and self.scale.conversion_factor == other.scale.conversion_factor:
+            return True
+        return False
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -45,12 +52,31 @@ class MetaUnit(type):
             return type(f"Unit", (Unit,), {"scale": new_scale, "value": None})
         raise TypeError(f"{self} can only be powered by {int} and {float}")
 
+    def __add__(self, other):
+        raise TypeError(f"Units with translated scale are not allowed yet.")
+
+    def __sub__(self, other):
+        raise TypeError(f"Units with translated scale are not allowed yet.")
+
+    def __radd__(self, other):
+        raise TypeError(f"Units with translated scale are not allowed yet.")
+
+    def __rsub__(self, other):
+        raise TypeError(f"Units with translated scale are not allowed yet.")
+
 
 class Unit(metaclass=MetaUnit):
     scale: Scale
-    value: float
+    value: float | int
 
-    def __init__(self, value):
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not hasattr(cls, 'scale') or not isinstance(cls.scale, Scale):
+            raise TypeError(f"Subclass of {Unit} must define class attribute 'scale' of type {Scale}.")
+
+    def __init__(self, value: float | int):
+        if not isinstance(value, float | int):
+            raise TypeError(f"Property 'value' must be of the type {float} or {int}")
         self.value = value
 
     def __eq__(self, other):
@@ -162,3 +188,4 @@ class Unit(metaclass=MetaUnit):
             new_instance.scale = unit.scale
             return new_instance
         raise TypeError
+

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Self
 
+from kobject import Kobject
+
 from physities.src.dimension.base_dimensions import BaseDimension
 
 

@@ -3,7 +3,7 @@ from physities.src.scale import Scale
 from .unit import Unit
 
 
-class Metre(Unit):
+class Meter(Unit):
     scale = Scale(
         dimension=Dimension.new_length(),
         from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
@@ -68,22 +68,22 @@ class Candela(Unit):
 
 # Length
 
-Gigametre = 1000000000 * Metre
-Megametre = 1000000 * Metre
-Kilometre = 1000 * Metre
-Hectometre = 100 * Metre
-Decametre = 10 * Metre
-Decimetre = 0.1 * Metre
-Centimetre = 0.01 * Metre
-Millimetre = 0.001 * Metre
-Micrometre = 0.000001 * Metre
-Nanometre = 0.000000001 * Metre
-Foot = 0.3048 * Metre
-Yard = 0.9144 * Metre
-Inch = 0.0254 * Metre
-Mile = 1609.34 * Metre
-Furlong = 201.168 * Metre
-Rod = 5.0292 * Metre
+Gigameter = 1000000000 * Meter
+Megameter = 1000000 * Meter
+Kilometer = 1000 * Meter
+Hectometer = 100 * Meter
+Decameter = 10 * Meter
+Decimeter = 0.1 * Meter
+Centimeter = 0.01 * Meter
+Millimeter = 0.001 * Meter
+Micrometer = 0.000001 * Meter
+Nanometer = 0.000000001 * Meter
+Foot = 0.3048 * Meter
+Yard = 0.9144 * Meter
+Inch = 0.0254 * Meter
+Mile = 1609.34 * Meter
+Furlong = 201.168 * Meter
+Rod = 5.0292 * Meter
 
 # Time
 
@@ -140,38 +140,38 @@ Nanoampere = 0.000000001 * Ampere
 
 # Area
 
-Gigametre2 = Gigametre * Gigametre
-Megametre2 = Megametre * Megametre
-Kilometre2 = Kilometre * Kilometre
-Hectometre2 = Hectare = Hectometre * Hectometre
-Decametre2 = Decametre * Decametre
-Metre2 = Metre * Metre
-Decimetre2 = Decimetre * Decimetre
-Centimetre2 = Centimetre * Centimetre
-Millimetre2 = Millimetre * Millimetre
-Micrometre2 = Micrometre * Micrometre
-Nanometre2 = Nanometre * Nanometre
+Gigameter2 = Gigameter * Gigameter
+Megameter2 = Megameter * Megameter
+Kilometer2 = Kilometer * Kilometer
+Hectometer2 = Hectare = Hectometer * Hectometer
+Decameter2 = Decameter * Decameter
+Meter2 = Meter * Meter
+Decimeter2 = Decimeter * Decimeter
+Centimeter2 = Centimeter * Centimeter
+Millimeter2 = Millimeter * Millimeter
+Micrometer2 = Micrometer * Micrometer
+Nanometer2 = Nanometer * Nanometer
 Foot2 = Foot * Foot
 Yard2 = Yard * Yard
 Inch2 = Inch * Inch
 Mile2 = Mile * Mile
 Furlong2 = Furlong * Furlong
 Rod2 = Rod * Rod
-Acre = 4046.860107422 * Metre2
+Acre = 4046.860107422 * Meter2
 
 # Volume
 
-Gigametre3 = Gigametre2 * Gigametre
-Megametre3 = Megametre2 * Megametre
-Kilometre3 = Kilometre2 * Kilometre
-Hectometre3 = Hectometre2 * Hectometre
-Decametre3 = Decametre2 * Decametre
-Metre3 = Kiloliter = Metre2 * Metre
-Decimetre3 = Liter = Decimetre2 * Decimetre
-Centimetre3 = Milliliter = Centimetre2 * Centimetre
-Millimetre3 = Millimetre2 * Millimetre
-Micrometre3 = Micrometre2 * Micrometre
-Nanometre3 = Nanometre2 * Nanometre
+Gigameter3 = Gigameter2 * Gigameter
+Megameter3 = Megameter2 * Megameter
+Kilometer3 = Kilometer2 * Kilometer
+Hectometer3 = Hectometer2 * Hectometer
+Decameter3 = Decameter2 * Decameter
+Meter3 = Kiloliter = Meter2 * Meter
+Decimeter3 = Liter = Decimeter2 * Decimeter
+Centimeter3 = Milliliter = Centimeter2 * Centimeter
+Millimeter3 = Millimeter2 * Millimeter
+Micrometer3 = Micrometer2 * Micrometer
+Nanometer3 = Nanometer2 * Nanometer
 Foot3 = Foot2 * Foot
 Yard3 = Yard2 * Yard
 Inch3 = Inch2 * Inch
@@ -180,4 +180,4 @@ Furlong3 = Furlong2 * Furlong
 Rod3 = Rod2 * Rod
 Gallon = 3785.411784 * Milliliter
 Pint = 473 * Milliliter
-Barrel = 0.158987294928 * Metre3
+Barrel = 0.158987294928 * Meter3

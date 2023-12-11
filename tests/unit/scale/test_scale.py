@@ -265,3 +265,13 @@ class TestScale:
         assert kilometer_scale**2 == kilometer_square_scale
         # check unidimensional scale powered stretch/compression
         assert 1000000 * meter_scale**2 == kilometer_square_scale
+
+    @staticmethod
+    def test_power_invalid(meter_scale, second_scale):
+        class A:
+            pass
+        invalid_values = [second_scale, [], {}, (), A]
+        for i in invalid_values:
+            with pytest.raises(TypeError) as error:
+                meter_scale ** i
+            assert str(error.value) == f"{Scale} can only be powered by {int} or {float}. This operation is not implemented for {type(i)}."
