@@ -21,7 +21,7 @@ class Second(Unit):
     value = None
 
 
-class Gram(Unit):
+class Kilogram(Unit):
     scale = Scale(
         dimension=Dimension.new_mass(),
         from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
@@ -64,6 +64,15 @@ class Candela(Unit):
         rescale_value=1,
     )
     value = None
+
+
+# class Scalar(Unit):
+#     scale = Scale(
+#         dimension=Dimension.new_dimensionless(),
+#         from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+#         rescale_value=1,
+#     )
+#     value = None
 
 
 # Length
@@ -111,23 +120,22 @@ Score = 20 * Unity
 
 # Mass
 
-Gigagram = 1000000000 * Gram
-Megagram = 1000000 * Gram
-Kilogram = 1000 * Gram
-Hectogram = 100 * Gram
-Decagram = 10 * Gram
-Decigram = 0.1 * Gram
-Centigram = 0.01 * Gram
-Milligram = 0.001 * Gram
-Microgram = 0.000001 * Gram
-Nanogram = 0.000000001 * Gram
-Pound = 0.453592 * Gram
-Ounce = 0.0283495 * Gram
-Tonne = 1000 * Gram
-Stone = 6.35029 * Gram
-Carat = 0.0002 * Gram
-Grain = 0.0000647989 * Gram
-Slug = 14.5939 * Gram
+Gigagram = 1000000 * Kilogram
+Megagram = Tonne = 1000 * Kilogram
+Hectogram = 0.1 * Kilogram
+Decagram = 0.01 * Kilogram
+Gram = 0.001 * Kilogram
+Decigram = 0.0001 * Kilogram
+Centigram = 0.00001 * Kilogram
+Milligram = 0.000001 * Kilogram
+Microgram = 0.000000001 * Kilogram
+Nanogram = 0.000000000001 * Kilogram
+Pound = 0.453592 * Kilogram
+Ounce = 0.0283495 * Kilogram
+Stone = 6.35029 * Kilogram
+Carat = 0.0002 * Kilogram
+Grain = 0.0000647989 * Kilogram
+Slug = 14.5939 * Kilogram
 
 # Eletric Current
 

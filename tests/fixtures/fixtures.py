@@ -25,6 +25,9 @@ def energy_dimension():
 def force_dimension():
     return Dimension.new_instance((1, 1, 0, -2, 0, 0, 0))
 
+@pytest.fixture()
+def mass_dimension():
+    return Dimension.new_instance((0, 1, 0, 0, 0, 0, 0))
 
 @pytest.fixture()
 def velocity_dimension():
@@ -42,6 +45,17 @@ def velocity_square_dimension():
 
 
 @pytest.fixture()
+def dimensionless_dimension():
+    return Dimension.new_instance((0, 0, 0, 0, 0, 0, 0))
+
+@pytest.fixture()
+def dimensionless_scale(dimensionless_dimension):
+    return Scale(
+        dimension=dimensionless_dimension,
+        from_base_scale_conversions=(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0), rescale_value=1
+    )
+
+@pytest.fixture()
 def inverse_velocity_scale(inverse_velocity_dimension):
     return Scale.new(dimension=inverse_velocity_dimension)
 
@@ -49,7 +63,16 @@ def inverse_velocity_scale(inverse_velocity_dimension):
 def newton_scale(force_dimension):
     return Scale.new(
         dimension=force_dimension,
-        from_base_scale_conversions=(1, 1000, 1, 1, 1, 1, 1),
+        from_base_scale_conversions=(1, 1, 1, 1, 1, 1, 1),
+        rescale_value=1,
+    )
+
+
+@pytest.fixture()
+def kilogram_scale(mass_dimension):
+    return Scale.new(
+        dimension=mass_dimension,
+        from_base_scale_conversions=(1, 1, 1, 1, 1, 1, 1),
         rescale_value=1,
     )
 
@@ -98,7 +121,7 @@ def kilometer_scale():
 def joule_scale(energy_dimension):
     return Scale.new(
         dimension=energy_dimension,
-        from_base_scale_conversions=(1, 1000, 1, 1, 1, 1, 1),
+        from_base_scale_conversions=(1, 1, 1, 1, 1, 1, 1),
         rescale_value=1,
     )
 
@@ -107,8 +130,8 @@ def joule_scale(energy_dimension):
 def cal_scale(energy_dimension):
     return Scale.new(
         dimension=energy_dimension,
-        from_base_scale_conversions=(1, 1000, 1, 1, 1, 1, 1),
-        rescale_value=0.2390,
+        from_base_scale_conversions=(1, 1, 1, 1, 1, 1, 1),
+        rescale_value=4.184,
     )
 
 
@@ -156,6 +179,15 @@ def inverse_second_unit(second_inverse_scale,):
 
 
 @pytest.fixture()
+def kilogram_unit(kilogram_scale,):
+    class Kilogram(Unit):
+        scale = kilogram_scale
+        value = None
+
+    return Kilogram
+
+
+@pytest.fixture()
 def meter_per_second_unit(meter_per_second_scale):
     class MeterPerSecond(Unit):
         scale = meter_per_second_scale
@@ -193,3 +225,19 @@ def kilometer_square_unit(kilometer_square_scale):
         scale = kilometer_square_scale
         value = None
     return KilometerSquare
+
+
+@pytest.fixture()
+def joule_unit(joule_scale):
+    class Joule(Unit):
+        scale = joule_scale
+        value = None
+    return Joule
+
+
+@pytest.fixture()
+def calories_unit(cal_scale):
+    class Calorie(Unit):
+        scale = cal_scale
+        value = None
+    return Calorie

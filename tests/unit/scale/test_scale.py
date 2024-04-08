@@ -4,7 +4,7 @@ from tests.fixtures import *
 @pytest.mark.unit
 class TestScale:
     @staticmethod
-    def test_instantiation_success(dimension_sample, from_base_scale_conversion_sample):
+    def test_instantiation(dimension_sample, from_base_scale_conversion_sample):
         base_scale_conversions = (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
         obj_scale = Scale(
             dimension=dimension_sample,
@@ -57,81 +57,6 @@ class TestScale:
         assert obj_scale_6.rescale_value == 3
 
     @staticmethod
-    def test_invalid_dimension_type_instantiation(from_base_scale_conversion_sample):
-        invalid_dimensions = [[], {}, 1, 0.0, (1, 2, 3, 4, 5, 6, 7)]
-        for invalid_dimension in invalid_dimensions:
-            with pytest.raises(TypeError) as error:
-                Scale(
-                    dimension=invalid_dimension,
-                    rescale_value=1,
-                    from_base_scale_conversions=from_base_scale_conversion_sample,
-                )
-            with pytest.raises(TypeError) as error2:
-                Scale.new(dimension=invalid_dimension)
-            assert (
-                str(error.value)
-                == f"Class 'Scale' type error:\n Wrong type for dimension: {Dimension} != '{type(invalid_dimension)}'"
-            )
-            assert (
-                str(error2.value)
-                == f"Class 'Scale' type error:\n Wrong type for dimension: {Dimension} != '{type(invalid_dimension)}'"
-            )
-
-    @staticmethod
-    def test_invalid_rescale_value_type_instantiation(
-        dimension_sample, from_base_scale_conversion_sample
-    ):
-        invalid_rescale_values = [[], (1,), {}]
-        for invalid_rescale_value in invalid_rescale_values:
-            with pytest.raises(TypeError) as error:
-                Scale(
-                    dimension=dimension_sample,
-                    rescale_value=invalid_rescale_value,
-                    from_base_scale_conversions=from_base_scale_conversion_sample,
-                )
-            with pytest.raises(TypeError) as error2:
-                Scale.new(rescale_value=invalid_rescale_value)
-            assert (
-                str(error.value)
-                == f"Class 'Scale' type error:\n Wrong type for rescale_value: {float | int} != '{type(invalid_rescale_value)}'"
-            )
-            assert (
-                str(error2.value)
-                == f"Class 'Scale' type error:\n Wrong type for rescale_value: {float | int} != '{type(invalid_rescale_value)}'"
-            )
-
-    @staticmethod
-    def test_invalid_from_base_scale_conversions_type_instantiation(dimension_sample):
-        invalid_from_base_scale_conversions_list = [
-            1,
-            2.0,
-            {},
-            [1, 2, 3, 4, 5, 6, 7],
-            (),
-        ]
-        for (
-            invalid_from_base_scale_conversions
-        ) in invalid_from_base_scale_conversions_list:
-            with pytest.raises(TypeError) as error:
-                Scale(
-                    dimension=dimension_sample,
-                    rescale_value=1,
-                    from_base_scale_conversions=invalid_from_base_scale_conversions,
-                )
-            with pytest.raises(TypeError) as error2:
-                Scale.new(
-                    from_base_scale_conversions=invalid_from_base_scale_conversions
-                )
-            assert (
-                str(error.value)
-                == f"Class 'Scale' type error:\n Wrong type for from_base_scale_conversions: {tuple[float | int, float | int, float | int, float | int, float | int, float | int, float | int]} != '{type(invalid_from_base_scale_conversions)}'"
-            )
-            assert (
-                str(error2.value)
-                == f"Class 'Scale' type error:\n Wrong type for from_base_scale_conversions: {tuple[float | int, float | int, float | int, float | int, float | int, float | int, float | int]} != '{type(invalid_from_base_scale_conversions)}'"
-            )
-
-    @staticmethod
     def test_equality(dimension_sample, velocity_dimension):
         scale_1 = Scale.new(dimension=dimension_sample, rescale_value=3)
         scale_2 = Scale.new(
@@ -162,7 +87,7 @@ class TestScale:
         # check different rescale_value
         assert scale_4 != scale_5
         # check same conversion_factor different scales
-        assert scale_6 != scale_7
+        assert scale_6 == scale_7
 
     @staticmethod
     def test_multiplication(
@@ -177,7 +102,7 @@ class TestScale:
         # composition check
         assert newton_scale * meter_scale == joule_scale
         # check multidimensional scale stretch and compression
-        assert joule_scale * 0.2390 == cal_scale
+        assert joule_scale * 4.184 == cal_scale
         # check unidimensional scale stretch and compression
         assert 1000 * meter_scale == kilometer_scale
         # check scale annulation
@@ -225,7 +150,7 @@ class TestScale:
         ) / second_inverse_scale == kilometer_scale / 1000
         # check check multidimensional scale stretch/compression
         # TODO floating precision correction
-        assert cal_scale / 0.2390 == 0.9999999999999999 * joule_scale
+        assert cal_scale / 4.184 == joule_scale
 
     @staticmethod
     def test_division_invalid(joule_scale):
@@ -253,14 +178,14 @@ class TestScale:
         kilometer_scale,
         kilometer_square_scale,
         second_scale,
-        kilometer_per_second_square,
+        kilometer_per_second_square_scale,
     ):
         # check multidimensional scale stretch/compression
         assert (1000 * (meter_scale / second_scale)) ** 2 == 1000000 * (
             meter_scale / second_scale
         ) ** 2
         # check multidimensional scale powered specific
-        assert (kilometer_scale / second_scale) ** 2 == kilometer_per_second_square
+        assert (kilometer_scale / second_scale) ** 2 == kilometer_per_second_square_scale
         # check unidimensional scale powered
         assert kilometer_scale**2 == kilometer_square_scale
         # check unidimensional scale powered stretch/compression

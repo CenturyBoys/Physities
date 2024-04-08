@@ -18,14 +18,6 @@ class Dimension:
         float,
     ]
 
-    def __post_init__(self):
-        if not isinstance(self.dimensions_tuple, tuple):
-            raise TypeError(f"dimensions_tuple is not of the type {type(tuple)}.")
-        if len(self.dimensions_tuple) != len(BaseDimension):
-            raise ValueError(
-                f"Invalid length of tuple. Expected {len(BaseDimension)}, but got {len(self.dimensions_tuple)}."
-            )
-
     @property
     def length(self):
         return self.dimensions_tuple[BaseDimension.LENGTH]

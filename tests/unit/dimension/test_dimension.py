@@ -12,28 +12,6 @@ class TestDimension:
         assert isinstance(obj_dimension, Dimension)
 
     @staticmethod
-    def test_invalid_type_instantiation():
-        invalid_tuples = [[], {}, 1, 0.0]
-        for invalid_tuple in invalid_tuples:
-            with pytest.raises(TypeError) as error:
-                obj_dimension = Dimension(dimensions_tuple=invalid_tuple)
-            assert (
-                str(error.value)
-                == f"dimensions_tuple is not of the type {type(tuple)}."
-            )
-
-    @staticmethod
-    def test_invalid_length_instantiation():
-        invalid_tuples = [(), (1,), (1, 2, 3), (1, 2, 3, 4, 5, 6, 7, 8)]
-        for invalid_tuple in invalid_tuples:
-            with pytest.raises(ValueError) as error:
-                obj_dimension = Dimension(dimensions_tuple=invalid_tuple)
-            assert (
-                str(error.value)
-                == f"Invalid length of tuple. Expected {len(BaseDimension)}, but got {len(invalid_tuple)}."
-            )
-
-    @staticmethod
     def test_new_methods_invalid_power():
         invalid_powers = [[], "1", {}, ()]
         new_methods = [

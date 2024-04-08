@@ -8,6 +8,9 @@ from physities.src.scale.scale import Scale
 class MetaUnit(type):
     scale: Scale
 
+    def __hash__(self):
+        return hash(self.scale)
+
     def __eq__(self, other):
         if isinstance(other, MetaUnit) and self.scale.dimension == other.scale.dimension and self.scale.conversion_factor == other.scale.conversion_factor:
             return True
@@ -69,14 +72,7 @@ class Unit(metaclass=MetaUnit):
     scale: Scale
     value: float | int
 
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        if not hasattr(cls, 'scale') or not isinstance(cls.scale, Scale):
-            raise TypeError(f"Subclass of {Unit} must define class attribute 'scale' of type {Scale}.")
-
     def __init__(self, value: float | int):
-        if not isinstance(value, float | int):
-            raise TypeError(f"Property 'value' must be of the type {float} or {int}")
         self.value = value
 
     def __eq__(self, other):
@@ -101,8 +97,8 @@ class Unit(metaclass=MetaUnit):
                 new_instance = type(self)(new_value)
                 new_instance.scale = self.scale
                 return new_instance
-            raise TypeError(f"Dimensions do not match")
-        raise TypeError
+            raise TypeError(f"Dimensions do not match {self.scale.dimension} != {other.scale.dimension}")
+        raise TypeError(f"{type(other)} is not from type {type(self)}")
 
     def __sub__(self, other):
         if isinstance(other, Unit):
@@ -111,8 +107,8 @@ class Unit(metaclass=MetaUnit):
                 new_instance = type(self)(new_value)
                 new_instance.scale = self.scale
                 return new_instance
-            raise TypeError(f"Dimensions do not match")
-        raise TypeError
+            raise TypeError(f"Dimensions do not match {self.scale.dimension} != {other.scale.dimension}")
+        raise TypeError(f"{type(other)} is not from type {type(self)}")
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -129,7 +125,7 @@ class Unit(metaclass=MetaUnit):
             new_instance = type(self)(new_value)
             new_instance.scale = new_scale
             return new_instance
-        raise TypeError
+        raise TypeError(f"{type(self)} can be multiplied only by {type(self)}, {float} and {int}")
 
     def __rmul__(self, other):
         try:
@@ -153,7 +149,7 @@ class Unit(metaclass=MetaUnit):
             new_instance = type(self)(new_value)
             new_instance.scale = new_scale
             return new_instance
-        raise TypeError
+        raise TypeError(f"{type(self)} only allows division by {type(self)}, {int} and {float}")
 
     def __rtruediv__(self, other):
         if isinstance(other, (int, float)):
@@ -162,15 +158,16 @@ class Unit(metaclass=MetaUnit):
             new_instance = type(self)(new_value)
             new_instance.scale = new_scale
             return new_instance
-        raise TypeError
+        raise TypeError(f"{type(self)} can divide only {type(self)}, {int} and {float}")
 
     def __pow__(self, power, modulo=None):
         if isinstance(power, (int, float)):
-            new_value = self.value**2
+            new_value = self.value**power
             new_instance = type(self)(new_value)
-            new_scale = self.scale**2
+            new_scale = self.scale**power
             new_instance.scale = new_scale
             return new_instance
+        raise TypeError(f"{type(self)} can only be powered by {int} and {float}")
 
     def to_si(self):
         new_value = self.value * self.scale.conversion_factor
@@ -179,13 +176,15 @@ class Unit(metaclass=MetaUnit):
         new_instance.scale = new_scale
         return new_instance
 
-    def convert(self, unit: Self) -> Self:
-        if self.scale.dimension == unit.scale.dimension:
-            new_value = (
-                self.value * self.scale.conversion_factor / unit.scale.conversion_factor
-            )
-            new_instance = type(self)(new_value)
-            new_instance.scale = unit.scale
-            return new_instance
-        raise TypeError
+    def convert(self, unit: MetaUnit | Self) -> Self:
+        if isinstance(unit, (MetaUnit, Unit)):
+            if self.scale.dimension == unit.scale.dimension:
+                new_value = (
+                    self.value * self.scale.conversion_factor / unit.scale.conversion_factor
+                )
+                new_instance = type(self)(new_value)
+                new_instance.scale = unit.scale
+                return new_instance
+            raise TypeError("Dimensions do not match")
+        raise TypeError(f"Invalid param type {type(unit)} != {type(MetaUnit)}")
 

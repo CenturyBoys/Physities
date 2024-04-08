@@ -29,16 +29,6 @@ class Scale(Kobject):
     ]
     rescale_value: float | int
 
-    def __post_init__(self):
-        if not isinstance(self.dimension, Dimension):
-            raise TypeError(f"Property 'dimension' is not of the type {type(Dimension)}.")
-        if not isinstance(self.from_base_scale_conversions, tuple):
-            raise TypeError(f"from_base_scale_conversions is not of the type {type(tuple)}.")
-        if len(self.from_base_scale_conversions) != len(BaseDimension):
-            raise ValueError(
-                f"Invalid length of from_base_scale_conversions. Expected {len(BaseDimension)}, but got {len(self.from_base_scale_conversions)}."
-            )
-
     @classmethod
     def new(
         cls,
@@ -101,12 +91,7 @@ class Scale(Kobject):
 
     def __eq__(self, other):
         if isinstance(other, Scale):
-            if (
-                self.dimension == other.dimension
-                and self.from_base_scale_conversions
-                == other.from_base_scale_conversions
-                and self.rescale_value == other.rescale_value
-            ):
+            if self.dimension == other.dimension and self.conversion_factor == other.conversion_factor:
                 return True
         return False
 
