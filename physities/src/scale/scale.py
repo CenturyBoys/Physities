@@ -32,12 +32,19 @@ class Scale(Kobject):
     @classmethod
     def new(
         cls,
-        dimension: Dimension = Dimension.new_dimensionless(),
+        dimension: Dimension = None,
         from_base_scale_conversions: tuple[
             float, float, float, float, float, float, float
-        ] = (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
-        rescale_value: float = 1,
+        ] = None,
+        rescale_value: float = None,
     ):
+        if from_base_scale_conversions is None:
+            from_base_scale_conversions = (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
+        if rescale_value is None:
+            rescale_value = 1
+        if dimension is None:
+            dimension = Dimension.new_dimensionless()
+
         return cls(
             dimension=dimension,
             from_base_scale_conversions=from_base_scale_conversions,

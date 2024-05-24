@@ -1,6 +1,5 @@
 from typing import Self
 
-from kobject import Kobject
 
 from physities.src.scale.scale import Scale
 

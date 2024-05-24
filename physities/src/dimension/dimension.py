@@ -1,9 +1,33 @@
 from dataclasses import dataclass
 from typing import Self
 
-from kobject import Kobject
+
 
 from physities.src.dimension.base_dimensions import BaseDimension
+
+SYMBOLS = {
+    BaseDimension.LENGTH: "L",
+    BaseDimension.MASS: "m",
+    BaseDimension.TIME: "t",
+    BaseDimension.TEMPERATURE: "T",
+    BaseDimension.AMOUNT: "N",
+    BaseDimension.ELECTRIC_CURRENT: "I",
+    BaseDimension.LUMINOUS_INTENSITY: "Iᵥ",
+}
+
+NUMBER_STR_TO_POWER_STR = {
+    "0": "⁰",
+    "1": "¹",
+    "2": "²",
+    "3": "³",
+    "4": "⁴",
+    "5": "⁵",
+    "6": "⁶",
+    "7": "⁷",
+    "8": "⁸",
+    "9": "⁹",
+    ".": "ˑ",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,7 +112,7 @@ class Dimension:
             power = 1
         elif not isinstance(power, (int, float)):
             raise TypeError("The exponentiation must be a int or a float.")
-        dimensions_tuple = [0.0 for i in BaseDimension]
+        dimensions_tuple = [0.0 for _ in BaseDimension]
         dimensions_tuple[base_unit] = power
         return cls.new_instance(dimensions_tuple=tuple(dimensions_tuple))
 
@@ -184,28 +208,6 @@ class Dimension:
         raise TypeError("Exponentiation with Dimension is not allowed.")
 
     def show_dimension(self):
-        symbols = {
-            BaseDimension.LENGTH: "L",
-            BaseDimension.MASS: "m",
-            BaseDimension.TIME: "t",
-            BaseDimension.TEMPERATURE: "T",
-            BaseDimension.AMOUNT: "N",
-            BaseDimension.ELECTRIC_CURRENT: "I",
-            BaseDimension.LUMINOUS_INTENSITY: "Iᵥ",
-        }
-        number_str_to_power_str = {
-            "0": "⁰",
-            "1": "¹",
-            "2": "²",
-            "3": "³",
-            "4": "⁴",
-            "5": "⁵",
-            "6": "⁶",
-            "7": "⁷",
-            "8": "⁸",
-            "9": "⁹",
-            ".": "ˑ",
-        }
         numerator = ""
         denominator = ""
         for i in range(len(self.dimensions_tuple)):
@@ -216,11 +218,11 @@ class Dimension:
             if power < 0:
                 is_numerator = False
                 power = abs(power)
-            power_str = "".join([number_str_to_power_str[i] for i in str(power)])
+            power_str = "".join([NUMBER_STR_TO_POWER_STR[i] for i in str(power)])
             if is_numerator:
-                numerator += f"{symbols[BaseDimension(i)]}{power_str}"
+                numerator += f"{SYMBOLS[BaseDimension(i)]}{power_str}"
             else:
-                denominator += f"{symbols[BaseDimension(i)]}{power_str}"
+                denominator += f"{SYMBOLS[BaseDimension(i)]}{power_str}"
         if not denominator:
             to_print = f"{numerator}"
             print()
