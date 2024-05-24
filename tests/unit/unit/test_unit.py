@@ -194,7 +194,7 @@ class TestUnit:
         # check unidimensional equality
         assert distance_1 == distance_2
         # check multidimensional equality
-        assert energy_1 == energy_2
+        assert energy_2 == energy_1
 
     @staticmethod
     def test_multiplication(
