@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "physities"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["M4tus4l3m <lucas.sievers@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pytest = "^7.4.0"
 kobject = "^0.6.1"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
 
 [build-system]
 requires = ["poetry-core"]
